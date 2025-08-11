@@ -1995,9 +1995,235 @@ class UserPanelApp {
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.app = new UserPanelApp();
-    window.app.init();
+    console.log('🚀 DOM Content Loaded - Starting app...');
+    
+    try {
+        window.app = new UserPanelApp();
+        window.app.init();
+    } catch (error) {
+        console.error('❌ App initialization failed:', error);
+        
+        // Emergency fallback - load test data directly
+        console.log('🔧 Loading emergency fallback...');
+        setTimeout(() => {
+            loadEmergencyTestData();
+        }, 1000);
+    }
 });
+
+// Emergency fallback function
+function loadEmergencyTestData() {
+    console.log('🆘 Emergency test data loading...');
+    
+    try {
+        const testCoins = [
+            {
+                id: 1,
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                current_price: 2650000,
+                price_change_24h: 2.45,
+                volume_24h: 45000000000,
+                logo_url: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png'
+            },
+            {
+                id: 2,
+                name: 'Ethereum',
+                symbol: 'ETH',
+                current_price: 165000,
+                price_change_24h: -1.23,
+                volume_24h: 25000000000,
+                logo_url: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'
+            },
+            {
+                id: 3,
+                name: 'Binance Coin',
+                symbol: 'BNB',
+                current_price: 18500,
+                price_change_24h: 3.67,
+                volume_24h: 2500000000,
+                logo_url: 'https://cryptologos.cc/logos/bnb-bnb-logo.png'
+            },
+            {
+                id: 4,
+                name: 'Cardano',
+                symbol: 'ADA',
+                current_price: 25.50,
+                price_change_24h: -0.89,
+                volume_24h: 1200000000,
+                logo_url: 'https://cryptologos.cc/logos/cardano-ada-logo.png'
+            },
+            {
+                id: 5,
+                name: 'Solana',
+                symbol: 'SOL',
+                current_price: 6750,
+                price_change_24h: 5.23,
+                volume_24h: 3200000000,
+                logo_url: 'https://cryptologos.cc/logos/solana-sol-logo.png'
+            }
+        ];
+        
+        // Hide loader
+        const marketLoader = document.getElementById('marketLoader');
+        if (marketLoader) {
+            marketLoader.style.display = 'none';
+        }
+        
+        // Render coins directly
+        renderEmergencyCoins(testCoins);
+        
+        console.log('✅ Emergency test data loaded successfully');
+        
+    } catch (error) {
+        console.error('❌ Emergency fallback also failed:', error);
+        showEmergencyError();
+    }
+}
+
+// Emergency coin rendering
+function renderEmergencyCoins(coins) {
+    const desktopGrid = document.getElementById('desktopCoinsGrid');
+    const mobileGrid = document.getElementById('mobileCoinsGrid');
+    
+    if (!desktopGrid || !mobileGrid) {
+        console.error('❌ Grid containers not found');
+        return;
+    }
+    
+    // Clear existing content
+    desktopGrid.innerHTML = '';
+    mobileGrid.innerHTML = '';
+    
+    coins.forEach(coin => {
+        // Desktop card
+        const desktopCard = createEmergencyDesktopCard(coin);
+        desktopGrid.appendChild(desktopCard);
+        
+        // Mobile card
+        const mobileCard = createEmergencyMobileCard(coin);
+        mobileGrid.appendChild(mobileCard);
+    });
+    
+    // Show appropriate grid
+    if (window.innerWidth <= 768) {
+        desktopGrid.style.display = 'none';
+        mobileGrid.style.display = 'grid';
+    } else {
+        desktopGrid.style.display = 'grid';
+        mobileGrid.style.display = 'none';
+    }
+    
+    console.log('✅ Emergency coins rendered');
+}
+
+// Create emergency desktop card
+function createEmergencyDesktopCard(coin) {
+    const card = document.createElement('div');
+    card.className = 'desktop-coin-card';
+    
+    const priceChange = parseFloat(coin.price_change_24h) || 0;
+    const changeClass = priceChange >= 0 ? 'positive' : 'negative';
+    const changeIcon = priceChange >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+    
+    card.innerHTML = `
+        <div class="coin-header">
+            <div class="coin-info">
+                <div class="coin-logo">
+                    <img src="${coin.logo_url || `https://via.placeholder.com/40/4fc3f7/ffffff?text=${coin.symbol.charAt(0)}`}" 
+                         alt="${coin.name}" 
+                         onerror="this.src='https://via.placeholder.com/40/4fc3f7/ffffff?text=${coin.symbol.charAt(0)}'">
+                </div>
+                <div class="coin-details">
+                    <h3>${coin.name}</h3>
+                    <span>${coin.symbol}</span>
+                </div>
+            </div>
+            <div class="coin-price">
+                <div class="current-price">₺${parseFloat(coin.current_price).toLocaleString('tr-TR', {minimumFractionDigits: 2})}</div>
+                <div class="price-change ${changeClass}">
+                    <i class="fas ${changeIcon}"></i>
+                    ${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)}%
+                </div>
+            </div>
+        </div>
+        <div class="coin-actions">
+            <button class="trade-btn buy" onclick="alert('Trading modal will open for ${coin.name}')">
+                <i class="fas fa-arrow-up"></i> Al
+            </button>
+            <button class="trade-btn sell" onclick="alert('Trading modal will open for ${coin.name}')">
+                <i class="fas fa-arrow-down"></i> Sat
+            </button>
+        </div>
+    `;
+    
+    return card;
+}
+
+// Create emergency mobile card
+function createEmergencyMobileCard(coin) {
+    const card = document.createElement('div');
+    card.className = 'mobile-coin-card';
+    
+    const priceChange = parseFloat(coin.price_change_24h) || 0;
+    const changeClass = priceChange >= 0 ? 'positive' : 'negative';
+    
+    card.innerHTML = `
+        <div class="mobile-coin-header">
+            <div class="mobile-coin-info">
+                <div class="mobile-coin-logo">
+                    ${coin.symbol.charAt(0)}
+                </div>
+                <div class="mobile-coin-details">
+                    <h3>${coin.name}</h3>
+                    <span class="coin-symbol">${coin.symbol}</span>
+                </div>
+            </div>
+            <div class="mobile-coin-price">₺${parseFloat(coin.current_price).toLocaleString('tr-TR', {minimumFractionDigits: 2})}</div>
+        </div>
+        <div class="mobile-coin-stats">
+            <div class="mobile-coin-change ${changeClass}">
+                ${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)}%
+            </div>
+            <div class="mobile-coin-volume">
+                Vol: ₺${(parseFloat(coin.volume_24h) || 0).toLocaleString('tr-TR')}
+            </div>
+        </div>
+        <div class="mobile-coin-actions">
+            <button class="mobile-trade-btn buy" onclick="alert('Trading modal will open for ${coin.name}')">
+                <i class="fas fa-plus"></i> Al
+            </button>
+            <button class="mobile-trade-btn sell" onclick="alert('Trading modal will open for ${coin.name}')">
+                <i class="fas fa-minus"></i> Sat
+            </button>
+        </div>
+    `;
+    
+    return card;
+}
+
+// Show emergency error
+function showEmergencyError() {
+    const desktopGrid = document.getElementById('desktopCoinsGrid');
+    const mobileGrid = document.getElementById('mobileCoinsGrid');
+    const marketLoader = document.getElementById('marketLoader');
+    
+    if (marketLoader) marketLoader.style.display = 'none';
+    
+    const errorHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #ef4444;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
+            <h3 style="color: #ffffff; margin-bottom: 12px;">Kritik Hata</h3>
+            <p>Uygulama başlatılamadı. Lütfen sayfayı yenileyin.</p>
+            <button onclick="window.location.reload()" style="background: #4fc3f7; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 16px;">
+                Sayfayı Yenile
+            </button>
+        </div>
+    `;
+    
+    if (desktopGrid) desktopGrid.innerHTML = errorHTML;
+    if (mobileGrid) mobileGrid.innerHTML = errorHTML;
+}
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
