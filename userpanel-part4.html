@@ -1,0 +1,3041 @@
+     
+            
+            .coin-name {
+                font-size: 18px;
+            }
+            
+            .position-type {
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+            
+            .pnl-amount {
+                font-size: 16px;
+            }
+            
+            .pnl-percentage {
+                font-size: 12px;
+            }
+            
+            .position-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 12px;
+                margin-bottom: 16px;
+            }
+            
+            .stat-label {
+                font-size: 10px;
+            }
+            
+            .stat-value {
+                font-size: 12px;
+            }
+            
+            .mini-chart-container {
+                height: 50px;
+            }
+            
+            .btn-close-position {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .modern-positions-container {
+                gap: 12px;
+                padding: 0 4px;
+            }
+            
+            .modern-position-card {
+                padding: 14px;
+                border-radius: 12px;
+            }
+            
+            .coin-section {
+                gap: 12px;
+            }
+            
+            .coin-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+            
+            .coin-name {
+                font-size: 16px;
+            }
+            
+            .position-type {
+                font-size: 9px;
+                padding: 3px 8px;
+            }
+            
+            .pnl-amount {
+                font-size: 14px;
+            }
+            
+            .pnl-percentage {
+                font-size: 11px;
+            }
+            
+            .position-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                padding: 10px;
+                margin-bottom: 14px;
+            }
+            
+            .stat-label {
+                font-size: 9px;
+            }
+            
+            .stat-value {
+                font-size: 11px;
+            }
+            
+            .mini-chart-container {
+                height: 40px;
+            }
+            
+            .btn-close-position {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .modern-position-card {
+                padding: 12px;
+            }
+            
+            .position-main-info {
+                margin-bottom: 12px;
+            }
+            
+            .coin-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
+            .coin-name {
+                font-size: 14px;
+            }
+            
+            .position-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+                padding: 8px;
+            }
+            
+            .stat-label {
+                font-size: 8px;
+            }
+            
+            .stat-value {
+                font-size: 10px;
+            }
+            
+            .mini-chart-container {
+                height: 35px;
+            }
+            
+            .btn-close-position {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+
+            
+            .position-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Eski tablo stilleri - artık kullanılmıyor */
+        .positions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        
+        .positions-table th,
+        .positions-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .positions-table th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            color: #94a3b8;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        .positions-table td {
+            color: #ffffff;
+        }
+        
+        /* Küçük Candlestick Grafik Stilleri */
+        .coin-chart-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+        }
+        
+        .coin-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mini-candlestick-chart {
+            width: 120px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+        
+        .mini-candlestick-chart canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        .position-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .position-type.long {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .position-type.short {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .pnl-value {
+            font-weight: 600;
+        }
+        
+        .pnl-value.positive {
+            color: #10b981;
+        }
+        
+        .pnl-value.negative {
+            color: #ef4444;
+        }
+        
+        .position-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .position-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+        
+        .btn-close-position {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-close-position:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+        
+        .btn-close-position:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        /* Grafik Stilleri */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .chart-container {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #333;
+        }
+
+        .chart-container h4 {
+            margin: 0 0 15px 0;
+            color: #00d4aa;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chart-container canvas {
+            width: 100% !important;
+            height: 200px !important;
+            border-radius: 6px;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-secondary {
+            background: #2d3748;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+            transform: translateY(-1px);
+        }
+
+
+
+        /* Mobile Responsive - Kaldıraç */
+        @media (max-width: 768px) {
+            .leverage-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .position-type-selection {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .positions-table {
+                font-size: 12px;
+            }
+            
+            .positions-table th,
+            .positions-table td {
+                padding: 8px 4px;
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" onclick="closeMobileMenu()"></div>
+        
+        <!-- Sol Navigasyon Paneli -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>TradePro</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-item">
+                    <a href="#" class="nav-link active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-section="portfolio">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Portföyüm</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-section="markets">
+                        <i class="fas fa-coins"></i>
+                        <span>Piyasalar</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-section="trading">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>İşlem Yap</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-section="positions">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Pozisyonlar</span>
+                        <span class="position-count" id="positionCount" style="display: none;">0</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-section="recommendations">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Tavsiyeler</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-section="wallet">
+                        <i class="fas fa-wallet"></i>
+                        <span>Cüzdan</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-section="deposit">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Para Yatır</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-section="profile">
+                        <i class="fas fa-user"></i>
+                        <span>Profil</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- Ana İçerik Alanı -->
+        <main class="main-content">
+            <!-- Üst Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="balance-display" id="userBalance" onclick="openBalanceMenu()" style="cursor: pointer;" title="Para yatır/çek">
+                        <i class="fas fa-spinner fa-spin"></i> Yükleniyor...
+                    </div>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Çıkış
+                    </button>
+                </div>
+            </header>
+            
+            <!-- İçerik Alanları -->
+            <div class="content-area">
+                
+                <!-- Dashboard Bölümü -->
+                <section class="content-section active" id="dashboard">
+                    <div class="section-header">
+                        <h2 class="section-title">Hoş Geldiniz</h2>
+                        <p class="section-subtitle">Trading hesabınızın genel durumu</p>
+                    </div>
+                    
+                    <div class="grid grid-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Toplam Bakiye</h3>
+                                <i class="fas fa-wallet" style="color: #00d4aa;"></i>
+                            </div>
+                            <div id="totalBalance" class="loading">
+                                <div class="spinner"></div>
+                                Yükleniyor...
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Günlük Kazanç</h3>
+                                <i class="fas fa-chart-line" style="color: #00d4aa;"></i>
+                            </div>
+                            <div id="dailyPnl" class="loading">
+                                <div class="spinner"></div>
+                                Hesaplanıyor...
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Açık Pozisyonlar</h3>
+                                <i class="fas fa-chart-pie" style="color: #00d4aa;"></i>
+                            </div>
+                            <div id="openPositions" class="loading">
+                                <div class="spinner"></div>
+                                Yükleniyor...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Son İşlemler</h3>
+                            </div>
+                            <div id="recentTrades" class="loading">
+                                <div class="spinner"></div>
+                                Yükleniyor...
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Piyasa Özetı</h3>
+                            </div>
+                            <div id="marketSummary" class="loading">
+                                <div class="spinner"></div>
+                                Yükleniyor...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hızlı İşlemler Paneli - Dashboard'a taşındı -->
+                    <div class="card" style="margin-top: 32px;">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-bolt" style="color: #00d4aa; margin-right: 8px;"></i>
+                                Hızlı İşlemler
+                            </h3>
+                            <p style="color: #8b8fa3; font-size: 14px; margin: 8px 0 0 0;">En sık kullanılan işlemlere hızlı erişim</p>
+                        </div>
+                        <div class="quick-actions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; padding: 20px;">
+                            <button class="quick-action-btn" onclick="showSection('markets')" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 16px; text-align: left;" onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)'">
+                                <div class="quick-action-icon" style="width: 48px; height: 48px; background: linear-gradient(135deg, #10b981 0%, #34d399 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="quick-action-text" style="flex: 1;">
+                                    <span style="display: block; font-size: 16px; font-weight: 600; color: #ffffff; margin-bottom: 4px;">Coin Al</span>
+                                    <small style="font-size: 12px; color: rgba(255, 255, 255, 0.6);">Piyasalara git ve coin satın al</small>
+                                </div>
+                            </button>
+
+                            <button class="quick-action-btn" onclick="showSection('portfolio')" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 16px; text-align: left;" onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)'">
+                                <div class="quick-action-icon" style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <div class="quick-action-text" style="flex: 1;">
+                                    <span style="display: block; font-size: 16px; font-weight: 600; color: #ffffff; margin-bottom: 4px;">Portföy</span>
+                                    <small style="font-size: 12px; color: rgba(255, 255, 255, 0.6);">Varlıklarınızı görüntüleyin</small>
+                                </div>
+                            </button>
+
+                            <button class="quick-action-btn" onclick="showSection('deposit')" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 16px; text-align: left;" onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)'">
+                                <div class="quick-action-icon" style="width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);">
+                                    <i class="fas fa-plus-circle"></i>
+                                </div>
+                                <div class="quick-action-text" style="flex: 1;">
+                                    <span style="display: block; font-size: 16px; font-weight: 600; color: #ffffff; margin-bottom: 4px;">Para Yatır</span>
+                                    <small style="font-size: 12px; color: rgba(255, 255, 255, 0.6);">Hesabınıza bakiye ekleyin</small>
+                                </div>
+                            </button>
+
+                            <button class="quick-action-btn" onclick="showSection('positions')" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 16px; text-align: left;" onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)'">
+                                <div class="quick-action-icon" style="width: 48px; height: 48px; background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="quick-action-text" style="flex: 1;">
+                                    <span style="display: block; font-size: 16px; font-weight: 600; color: #ffffff; margin-bottom: 4px;">Pozisyonlar</span>
+                                    <small style="font-size: 12px; color: rgba(255, 255, 255, 0.6);">Kaldıraçlı işlemleriniz</small>
+                                </div>
+                            </button>
+
+                            <button class="quick-action-btn" onclick="showSection('trading')" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 16px; text-align: left;" onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)'">
+                                <div class="quick-action-icon" style="width: 48px; height: 48px; background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <div class="quick-action-text" style="flex: 1;">
+                                    <span style="display: block; font-size: 16px; font-weight: 600; color: #ffffff; margin-bottom: 4px;">Forex İşlem</span>
+                                    <small style="font-size: 12px; color: rgba(255, 255, 255, 0.6);">Profesyonel trading</small>
+                                </div>
+                            </button>
+
+                            <button class="quick-action-btn" onclick="openBalanceMenu()" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 16px; text-align: left;" onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)'">
+                                <div class="quick-action-icon" style="width: 48px; height: 48px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <div class="quick-action-text" style="flex: 1;">
+                                    <span style="display: block; font-size: 16px; font-weight: 600; color: #ffffff; margin-bottom: 4px;">Cüzdan</span>
+                                    <small style="font-size: 12px; color: rgba(255, 255, 255, 0.6);">Para yatır/çek işlemleri</small>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Diğer bölümler buraya eklenecek -->
+                <section class="content-section" id="portfolio">
+                    <div class="section-header">
+                        <h2 class="section-title">Portföyüm</h2>
+                        <p class="section-subtitle">Sahip olduğunuz kripto varlıklar ve performansları</p>
+                    </div>
+                    
+                    <!-- Portföy Özeti -->
+                    <div class="portfolio-summary-grid">
+                        <div class="portfolio-stat-card total-value">
+                            <div class="portfolio-stat-header">
+                                <div class="portfolio-stat-icon">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <div class="portfolio-stat-trend">
+                                    <i class="fas fa-arrow-up" id="totalValueTrend"></i>
+                                </div>
+                            </div>
+                            <div class="portfolio-stat-content">
+                                <h3 class="portfolio-stat-value" id="portfolioTotalValue">₺0</h3>
+                                <p class="portfolio-stat-label">Toplam Portföy Değeri</p>
+                                <div class="portfolio-stat-change" id="totalValueChange">+₺0 (0%)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="portfolio-stat-card profit-loss">
+                            <div class="portfolio-stat-header">
+                                <div class="portfolio-stat-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="portfolio-stat-trend">
+                                    <i class="fas fa-arrow-up" id="profitLossTrend"></i>
+                                </div>
+                            </div>
+                            <div class="portfolio-stat-content">
+                                <h3 class="portfolio-stat-value" id="portfolioProfitLoss">₺0</h3>
+                                <p class="portfolio-stat-label">Gerçekleşmemiş K/Z</p>
+                                <div class="portfolio-stat-change" id="profitLossPercent">0%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="portfolio-stat-card asset-count">
+                            <div class="portfolio-stat-header">
+                                <div class="portfolio-stat-icon">
+                                    <i class="fas fa-coins"></i>
+                                </div>
+                                <div class="portfolio-stat-badge" id="newAssetBadge">+0</div>
+                            </div>
+                            <div class="portfolio-stat-content">
+                                <h3 class="portfolio-stat-value" id="portfolioCoinCount">0</h3>
+                                <p class="portfolio-stat-label">Varlık Sayısı</p>
+                                <div class="portfolio-stat-change" id="assetDistribution">%0 çeşitlilik</div>
+                            </div>
+                        </div>
+                        
+                        <div class="portfolio-stat-card best-performer">
+                            <div class="portfolio-stat-header">
+                                <div class="portfolio-stat-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="portfolio-stat-trend up">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                            </div>
+                            <div class="portfolio-stat-content">
+                                <h3 class="portfolio-stat-value" id="bestPerformerValue">-</h3>
+                                <p class="portfolio-stat-label">En İyi Performans</p>
+                                <div class="portfolio-stat-change" id="bestPerformerChange">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Portföy Listesi -->
+                    <div class="portfolio-container">
+                        <div class="portfolio-header">
+                            <div class="portfolio-title-section">
+                                <h3 class="portfolio-main-title">
+                                    <i class="fas fa-briefcase"></i>
+                                    Varlık Portföyü
+                                </h3>
+                                <p class="portfolio-subtitle">Sahip olduğunuz kripto varlıkların detayları</p>
+                            </div>
+                            <div class="portfolio-controls">
+                                <div class="view-toggle">
+                                    <button class="view-btn active" id="cardViewBtn" onclick="togglePortfolioView('cards')">
+                                        <i class="fas fa-th-large"></i>
+                                    </button>
+                                    <button class="view-btn" id="tableViewBtn" onclick="togglePortfolioView('table')">
+                                        <i class="fas fa-list"></i>
+                                    </button>
+                                </div>
+                                <button class="refresh-btn" onclick="loadPortfolio()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span>Yenile</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Loading State -->
+                        <div id="portfolioLoader" class="loading" style="display: none; text-align: center; padding: 40px;">
+                            <div class="spinner"></div>
+                            <p>Portföy yükleniyor...</p>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div id="portfolioEmpty" style="display: none; text-align: center; padding: 60px 20px; color: #8b8fa3;">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                            <h3 style="color: #ffffff; margin-bottom: 12px;">Portföyünüz Boş</h3>
+                            <p style="margin-bottom: 24px;">Henüz hiç coin satın almamışsınız. Piyasalar sayfasından coin alım-satımı yapabilirsiniz.</p>
+                            <button onclick="showSection('markets')" style="background: #00d4aa; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">
+                                <i class="fas fa-shopping-cart"></i> Coin Satın Al
+                            </button>
+                        </div>
+                        
+                        <!-- Portfolio Cards View -->
+                        <div id="portfolioCards" class="portfolio-cards-container">
+                            <!-- Cards will be inserted here -->
+                        </div>
+                        
+                        <!-- Portfolio Table View -->
+                        <div id="portfolioTable" class="portfolio-table-container" style="display: none;">
+                            <div class="table-wrapper">
+                                <table class="enhanced-portfolio-table">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <div class="th-content">
+                                                    <i class="fas fa-coins"></i>
+                                                    <span>Varlık</span>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="th-content">
+                                                    <i class="fas fa-layer-group"></i>
+                                                    <span>Miktar</span>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="th-content">
+                                                    <i class="fas fa-calculator"></i>
+                                                    <span>Ort. Fiyat</span>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="th-content">
+                                                    <i class="fas fa-chart-line"></i>
+                                                    <span>Güncel</span>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="th-content">
+                                                    <i class="fas fa-wallet"></i>
+                                                    <span>Değer</span>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="th-content">
+                                                    <i class="fas fa-chart-bar"></i>
+                                                    <span>K/Z</span>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="th-content">
+                                                    <i class="fas fa-percentage"></i>
+                                                    <span>%</span>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="th-content">
+                                                    <i class="fas fa-cogs"></i>
+                                                    <span>İşlemler</span>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="portfolioTableBody">
+                                        <!-- Portfolio items will be inserted here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Para Yatırma Bölümü -->
+                <section class="content-section" id="deposit">
+                    <div class="section-header">
+                        <h2 class="section-title">Para Yatır</h2>
+                        <p class="section-subtitle">Hesabınıza para yatırarak işlem yapmaya başlayın</p>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <!-- Deposit Form -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-plus-circle" style="color: #00d4aa;"></i>
+                                    Para Yatırma Formu
+                                </h3>
+                            </div>
+                            
+                            <form id="deposit-form" style="display: flex; flex-direction: column; gap: 20px;">
+                                <div class="form-group">
+                                    <label for="deposit-method" style="display: block; margin-bottom: 8px; font-weight: 600; color: #ffffff;">Yatırma Yöntemi:</label>
+                                    <select id="deposit-method" style="width: 100%; padding: 12px 16px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #ffffff; font-size: 14px;" required>
+                                        <option value="">Yöntem seçiniz</option>
+                                        <option value="papara">Papara</option>
+                                        <option value="ziraat">Ziraat Bankası</option>
+                                        <option value="garanti">Garanti BBVA</option>
+                                        <option value="isbank">İş Bankası</option>
+                                        <option value="akbank">Akbank</option>
+                                        <option value="yapikredi">Yapı Kredi</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="deposit-amount" style="display: block; margin-bottom: 8px; font-weight: 600; color: #ffffff;">Yatırılacak Tutar (₺):</label>
+                                    <input type="number" id="deposit-amount" placeholder="1000" min="10" max="50000" step="0.01" style="width: 100%; padding: 12px 16px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #ffffff; font-size: 14px;" required>
+                                    <small style="color: #8b8fa3; font-size: 12px; margin-top: 4px; display: block;">Minimum: ₺10 - Maksimum: ₺50,000</small>
+                                </div>
+
+                                <!-- Papara specific fields -->
+                                <div id="papara-fields" class="method-fields" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="papara-number" style="display: block; margin-bottom: 8px; font-weight: 600; color: #ffffff;">Papara Numarası:</label>
+                                        <input type="text" id="papara-number" placeholder="Papara numaranızı girin" style="width: 100%; padding: 12px 16px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #ffffff; font-size: 14px;">
+                                    </div>
+                                </div>
+
+                                <!-- Bank specific fields -->
+                                <div id="ziraat-fields" class="method-fields" style="display: none;">
+                                    <div class="bank-info-card" style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 15px;">
+                                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                            <div class="bank-logo ziraat-logo" style="width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3); overflow: hidden;">
+                                <img src="bank_logo/Ziraat_Bankası_logo.png" alt="Ziraat Bankası" style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;">
+                                            </div>
+                                            <div>
+                                                <h4 style="color: #ffffff; margin: 0 0 5px 0;">Ziraat Bankası</h4>
+                                                <p style="color: #8b8fa3; margin: 0; font-size: 14px;">Türkiye Cumhuriyeti Ziraat Bankası A.Ş.</p>
+                                            </div>
+                                        </div>
+                                        <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px; font-family: monospace;">
+                                            <p style="margin: 0 0 8px 0; color: #ffffff;"><strong>IBAN:</strong> TR63 0001 0000 0000 0000 0000 01</p>
+                                            <p style="margin: 0 0 8px 0; color: #ffffff;"><strong>Hesap Sahibi:</strong> TradePro Ltd. Şti.</p>
+                                            <p style="margin: 0; color: #fbbf24; font-size: 12px;"><i class="fas fa-info-circle"></i> Havale açıklamasına kullanıcı adınızı yazınız</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="garanti-fields" class="method-fields" style="display: none;">
+                                    <div class="bank-info-card" style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 15px;">
+                                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                            <div class="bank-logo garanti-logo" style="width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3); overflow: hidden;">
+                                <img src="bank_logo/Garanti_BBVA.png" alt="Garanti BBVA" style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;">
+                                            </div>
+                                            <div>
+                                                <h4 style="color: #ffffff; margin: 0 0 5px 0;">Garanti BBVA</h4>
+                                                <p style="color: #8b8fa3; margin: 0; font-size: 14px;">Türkiye Garanti Bankası A.Ş.</p>
+                                            </div>
+                                        </div>
+                                        <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px; font-family: monospace;">
+                                            <p style="margin: 0 0 8px 0; color: #ffffff;"><strong>IBAN:</strong> TR63 0006 2000 0000 0000 0000 02</p>
+                                            <p style="margin: 0 0 8px 0; color: #ffffff;"><strong>Hesap Sahibi:</strong> TradePro Ltd. Şti.</p>
+                                            <p style="margin: 0; color: #fbbf24; font-size: 12px;"><i class="fas fa-info-circle"></i> Havale açıklamasına kullanıcı adınızı yazınız</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="isbank-fields" class="method-fields" style="display: none;">
+                                    <div class="bank-info-card" style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 15px;">
+                                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                            <div class="bank-logo isbank-logo" style="width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3); overflow: hidden;">
+                                                <img src="bank_logo/Türkiye İş Bankası.png" alt="İş Bankası" style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;">
+                                            </div>
+                                            <div>
+                                                <h4 style="color: #ffffff; margin: 0 0 5px 0;">İş Bankası</h4>
+                                                <p style="color: #8b8fa3; margin: 0; font-size: 14px;">Türkiye İş Bankası A.Ş.</p>
+                                            </div>
+                                        </div>
+                                        <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px; font-family: monospace;">
+                                            <p style="margin: 0 0 8px 0; color: #ffffff;"><strong>IBAN:</strong> TR63 0006 4000 0000 0000 0000 03</p>
+                                            <p style="margin: 0 0 8px 0; color: #ffffff;"><strong>Hesap Sahibi:</strong> TradePro Ltd. Şti.</p>
+                                            <p style="margin: 0; color: #fbbf24; font-size: 12px;"><i class="fas fa-info-circle"></i> Havale açıklamasına kullanıcı adınızı yazınız</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="akbank-fields" class="method-fields" style="display: none;">
+                                    <div class="bank-info-card" style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 15px;">
+                                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                            <div class="bank-logo akbank-logo" style="width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3); overflow: hidden;">
+                                                <img src="bank_logo/Akbank.png" alt="Akbank" style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;">
+                                            </div>
+                                            <div>
+                                                <h4 style="color: #ffffff; margin: 0 0 5px 0;">Akbank</h4>
+                                                <p style="color: #8b8fa3; margin: 0; font-size: 14px;">Akbank T.A.Ş.</p>
+                                            </div>
+                                        </div>
+                                        <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px; font-family: monospace;">
+                                            <p style="margin: 0 0 8px 0; color: #ffffff;"><strong>IBAN:</strong> TR63 0004 6000 0000 0000 0000 04</p>
+                                            <p style="margin: 0 0 8px 0; color: #ffffff;"><strong>Hesap Sahibi:</strong> TradePro Ltd. Şti.</p>
+                                            <p style="margin: 0; color: #fbbf24; font-size: 12px;"><i class="fas fa-info-circle"></i> Havale açıklamasına kullanıcı adınızı yazınız</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="yapikredi-fields" class="method-fields" style="display: none;">
+                                    <div class="bank-info-card" style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 15px;">
+                                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                            <div class="bank-logo yapikredi-logo" style="width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3); overflow: hidden;">
+                                                <img src="bank_logo/Yapı Kredi Bankası.jpg" alt="Yapı Kredi" style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;">
+                                            </div>
+                                            <div>
+                                                <h4 style="color: #ffffff; margin: 0 0 5px 0;">Yapı Kredi</h4>
+                                                <p style="color: #8b8fa3; margin: 0; font-size: 14px;">Yapı ve Kredi Bankası A.Ş.</p>
+                                            </div>
+                                        </div>
+                                        <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px; font-family: monospace;">
+                                            <p style="margin: 0 0 8px 0; color: #ffffff;"><strong>IBAN:</strong> TR63 0006 7000 0000 0000 0000 05</p>
+                                            <p style="margin: 0 0 8px 0; color: #ffffff;"><strong>Hesap Sahibi:</strong> TradePro Ltd. Şti.</p>
+                                            <p style="margin: 0; color: #fbbf24; font-size: 12px;"><i class="fas fa-info-circle"></i> Havale açıklamasına kullanıcı adınızı yazınız</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="deposit-note" style="display: block; margin-bottom: 8px; font-weight: 600; color: #ffffff;">Not (İsteğe bağlı):</label>
+                                    <textarea id="deposit-note" rows="3" placeholder="İlave notunuz varsa buraya yazabilirsiniz..." style="width: 100%; padding: 12px 16px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #ffffff; font-size: 14px; resize: vertical;"></textarea>
+                                </div>
+
+                                <button type="submit" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0, 212, 170, 0.3);">
+                                    <i class="fas fa-paper-plane"></i> Para Yatırma Talebi Gönder
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Deposit Information -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-info-circle" style="color: #3b82f6;"></i>
+                                    Para Yatırma Bilgileri
+                                </h3>
+                            </div>
+                            
+                            <div style="color: #e2e8f0; line-height: 1.6;">
+                                <div style="margin-bottom: 20px; padding: 16px; background: rgba(0, 212, 170, 0.1); border-left: 4px solid #00d4aa; border-radius: 8px;">
+                                    <h4 style="color: #00d4aa; margin-bottom: 8px;">
+                                        <i class="fas fa-clock"></i> İşlem Süreleri
+                                    </h4>
+                                    <ul style="margin: 0; padding-left: 20px;">
+                                        <li><strong>Papara:</strong> Anında</li>
+                                        <li><strong>Kredi Kartı:</strong> 5-15 dakika</li>
+                                        <li><strong>Banka Havalesi:</strong> 1-2 iş günü</li>
+                                    </ul>
+                                </div>
+
+                                <div style="margin-bottom: 20px; padding: 16px; background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; border-radius: 8px;">
+                                    <h4 style="color: #3b82f6; margin-bottom: 8px;">
+                                        <i class="fas fa-shield-alt"></i> Güvenlik
+                                    </h4>
+                                    <p>Tüm işlemleriniz SSL şifreleme ile korunmaktadır. Kart bilgileriniz güvenli bir şekilde saklanır.</p>
+                                </div>
+
+                                <div style="margin-bottom: 20px;">
+                                    <h4 style="color: #ffffff; margin-bottom: 12px;">
+                                        <i class="fas fa-university"></i> Desteklenen Bankalar
+                                    </h4>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 15px;">
+                                        <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                            <div class="bank-logo ziraat-logo" style="width: 40px; height: 40px; background: linear-gradient(135deg, #2E7D32, #4CAF50); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; margin: 0 auto 5px;">
+                                                Z
+                                            </div>
+                                            <p style="margin: 0; font-size: 12px; color: #8b8fa3;">Ziraat</p>
+                                        </div>
+                                        <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                            <div class="bank-logo garanti-logo" style="width: 40px; height: 40px; background: linear-gradient(135deg, #1976D2, #2196F3); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; margin: 0 auto 5px;">
+                                                G
+                                            </div>
+                                            <p style="margin: 0; font-size: 12px; color: #8b8fa3;">Garanti</p>
+                                        </div>
+                                        <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                            <div class="bank-logo isbank-logo" style="width: 40px; height: 40px; background: linear-gradient(135deg, #D32F2F, #F44336); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; margin: 0 auto 5px;">
+                                                İ
+                                            </div>
+                                            <p style="margin: 0; font-size: 12px; color: #8b8fa3;">İş Bankası</p>
+                                        </div>
+                                        <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                            <div class="bank-logo akbank-logo" style="width: 40px; height: 40px; background: linear-gradient(135deg, #FF9800, #FFC107); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; margin: 0 auto 5px;">
+                                                A
+                                            </div>
+                                            <p style="margin: 0; font-size: 12px; color: #8b8fa3;">Akbank</p>
+                                        </div>
+                                        <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                            <div class="bank-logo yapikredi-logo" style="width: 40px; height: 40px; background: linear-gradient(135deg, #9C27B0, #E91E63); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; margin: 0 auto 5px;">
+                                                Y
+                                            </div>
+                                            <p style="margin: 0; font-size: 12px; color: #8b8fa3;">Yapı Kredi</p>
+                                        </div>
+                                    </div>
+                                    <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                                        <p style="margin: 0; color: #3b82f6; font-size: 13px;">
+                                            <i class="fas fa-info-circle"></i>
+                                            Yukarıdaki bankalardan birini seçtiğinizde hesap bilgileri otomatik olarak gösterilecektir.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div style="padding: 16px; background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; border-radius: 8px;">
+                                    <h4 style="color: #ef4444; margin-bottom: 8px;">
+                                        <i class="fas fa-exclamation-circle"></i> Önemli Uyarılar
+                                    </h4>
+                                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                                        <li>Minimum yatırım tutarı ₺10'dur</li>
+                                        <li>Günlük maksimum yatırım limiti ₺50,000'dir</li>
+                                        <li>Para yatırma talepleri admin onayı sonrası hesabınıza yansır</li>
+                                        <li>Havale açıklamasına mutlaka kullanıcı adınızı yazınız</li>
+                                        <li>Yanlış hesap bilgisi kullananlarda işlem gecikebilir</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Deposit Requests -->
+                    <div class="card" style="margin-top: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-history" style="color: #8b5cf6;"></i>
+                                Son Para Yatırma Talepleriniz
+                            </h3>
+                        </div>
+                        <div id="recent-deposits">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Talepler yükleniyor...
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="content-section" id="markets">
+                    <div class="section-header">
+                        <h2 class="section-title">Piyasalar</h2>
+                        <p class="section-subtitle">Anlık kripto para fiyatları ve piyasa analizi</p>
+                    </div>
+                    
+                    <div class="modern-market-container">
+                        <div class="market-header">
+                            <div class="market-title-section">
+                                <h3 class="market-title">
+                                    <i class="fas fa-chart-line"></i>
+                                    Kripto Para Piyasası
+                                </h3>
+                                <p class="market-subtitle">Gerçek zamanlı veriler • Güncellenme: <span id="lastUpdate">Şimdi</span></p>
+                            </div>
+                            <div class="market-controls">
+                                <div class="search-container">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="coinSearch" placeholder="Coin ara...">
+                                </div>
+                                <button class="refresh-btn" onclick="refreshMarketData()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span>Yenile</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="market-filters">
+                            <button class="filter-chip active" data-filter="all">
+                                <i class="fas fa-star"></i> Tümü
+                            </button>
+                            <button class="filter-chip" data-filter="favorites">
+                                <i class="fas fa-heart"></i> Favoriler
+                            </button>
+                            <button class="filter-chip" data-filter="trending">
+                                <i class="fas fa-fire"></i> Trend
+                            </button>
+                            <button class="filter-chip" data-filter="top">
+                                <i class="fas fa-trophy"></i> Top 10
+                            </button>
+                        </div>
+                        
+                        <div id="marketLoader" class="modern-loading">
+                            <div class="loading-animation">
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                            </div>
+                            <p>Piyasa verileri yükleniyor...</p>
+                        </div>
+                        
+                        <!-- Desktop Coins Grid -->
+                        <div id="desktopCoinsGrid" class="desktop-coins-grid" style="display: none;">
+                            <!-- Coin kartları buraya yüklenecek -->
+                        </div>
+                        
+                        <!-- Mobile Coins Grid -->
+                        <div id="mobileCoinsGrid" class="mobile-coins-grid" style="display: none;">
+                            <!-- Mobil coin kartları buraya yüklenecek -->
+                        </div>
+                        
+                        <!-- Legacy table (gizli) -->
+                        <div id="marketTable" style="display: none;">
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid #2a2f3e;">
+                                            <th style="padding: 12px; text-align: left; color: #8b8fa3; font-weight: 600;">#</th>
+                                            <th style="padding: 12px; text-align: left; color: #8b8fa3; font-weight: 600;">Coin</th>
+                                            <th style="padding: 12px; text-align: right; color: #8b8fa3; font-weight: 600;">Fiyat</th>
+                                            <th style="padding: 12px; text-align: right; color: #8b8fa3; font-weight: 600;">24s %</th>
+                                            <th style="padding: 12px; text-align: right; color: #8b8fa3; font-weight: 600;">Piyasa Değeri</th>
+                                            <th style="padding: 12px; text-align: center; color: #8b8fa3; font-weight: 600;">İşlem</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="marketTableBody">
+                                        <!-- Coin verileri buraya yüklenecek -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="content-section" id="trading">
+                    <div class="trading-container">
+                        <div class="trading-header">
+                            <h2 class="trading-title">Professional Trading</h2>
+                            <p class="trading-subtitle">Advanced Forex, Indices & Commodities Platform</p>
+                            
+                            <div class="trading-filters">
+                                <button class="filter-btn active" data-category="all">All Markets</button>
+                                <button class="filter-btn" data-category="major">Major Pairs</button>
+                                <button class="filter-btn" data-category="minor">Minor Pairs</button>
+                                <button class="filter-btn" data-category="indices">Indices</button>
+                                <button class="filter-btn" data-category="commodities">Commodities</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Trading Workspace -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; height: 600px;">
+                            <!-- Sol Panel: Market Watch -->
+                            <div class="trading-panel" style="border-radius: 0; margin: 0; border-right: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div class="panel-header">
+                                    <h3 class="panel-title">Market Watch</h3>
+                                    <p class="panel-subtitle">Real-time quotes and spreads</p>
+                                </div>
+                                
+                                <div id="forexPairsContainer" style="height: 480px; overflow-y: auto;">
+                                    <div class="loading" id="forexLoader" style="margin: 60px 0;">
+                                        <div class="spinner"></div>
+                                        Loading market data...
+                                    </div>
+                                    <div id="forexPairsList" style="display: none;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sağ Panel: Trading Terminal -->
+                            <div class="trading-panel" style="border-radius: 0; margin: 0;">
+                                <div class="panel-header">
+                                    <h3 class="panel-title">Trading Terminal</h3>
+                                    <div id="selectedPairInfo" class="panel-subtitle">
+                                        Select an instrument to start trading
+                                    </div>
+                                </div>
+                                
+                                <div style="padding: 24px; height: 480px; overflow-y: auto;">
+                                    <div id="tradingForm" style="display: none;">
+                                        <!-- Direction Selection -->
+                                        <div class="trade-direction-container">
+                                            <button class="trade-direction-btn active" id="longBtn" data-direction="long">
+                                                <i class="fas fa-arrow-up"></i>
+                                                <div style="margin-top: 4px;">BUY / LONG</div>
+                                            </button>
+                                            <button class="trade-direction-btn" id="shortBtn" data-direction="short">
+                                                <i class="fas fa-arrow-down"></i>
+                                                <div style="margin-top: 4px;">SELL / SHORT</div>
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Trading Parameters -->
+                                        <div class="trading-form-group">
+                                            <label class="trading-label">Volume (Lots)</label>
+                                            <select id="lotSize" class="trading-select">
+                                                <option value="0.01">0.01 (Micro Lot)</option>
+                                                <option value="0.1">0.1 (Mini Lot)</option>
+                                                <option value="1.0">1.0 (Standard Lot)</option>
+                                                <option value="5.0">5.0 (Large Lot)</option>
+                                                <option value="10.0">10.0 (Institutional)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="trading-form-group">
+                                            <label class="trading-label">Leverage Ratio</label>
+                                            <select id="leverageRatio" class="trading-select">
+                                                <option value="10">1:10 (Conservative)</option>
+                                                <option value="50">1:50 (Moderate)</option>
+                                                <option value="100" selected>1:100 (Standard)</option>
+                                                <option value="200">1:200 (Aggressive)</option>
+                                                <option value="500">1:500 (Professional)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- Risk Management -->
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                            <div class="trading-form-group">
+                                                <label class="trading-label">Stop Loss</label>
+                                                <input type="number" id="stopLoss" class="trading-input" placeholder="0.00000" step="0.00001">
+                                            </div>
+                                            <div class="trading-form-group">
+                                                <label class="trading-label">Take Profit</label>
+                                                <input type="number" id="takeProfit" class="trading-input" placeholder="0.00000" step="0.00001">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Trade Calculation -->
+                                        <div class="trade-calculation-panel">
+                                            <div class="calculation-row">
+                                                <span class="calculation-label">Required Margin</span>
+                                                <span class="calculation-value" id="requiredMargin">₺0.00</span>
+                                            </div>
+                                            <div class="calculation-row">
+                                                <span class="calculation-label">Pip Value</span>
+                                                <span class="calculation-value" id="pipValue">$0.00</span>
+                                            </div>
+                                            <div class="calculation-row">
+                                                <span class="calculation-label">Spread</span>
+                                                <span class="calculation-value negative" id="spreadValue">0.0 pips</span>
+                                            </div>
+                                            <div class="calculation-row">
+                                                <span class="calculation-label">Contract Size</span>
+                                                <span class="calculation-value" id="contractSize">100,000</span>
+                                            </div>
+                                        </div>
+                                        
+                                                                        <!-- Execute Button -->
+                                <button class="trade-btn-modern buy" style="margin-top: 24px;">
+                                    <i class="fas fa-bolt"></i>
+                                    <span>İŞLEMİ GERÇEKLEŞTİR</span>
+                                </button>
+                                    </div>
+                                    
+                                    <!-- No Selection State -->
+                                    <div id="noSelectionMessage" class="no-selection-message">
+                                        <div class="no-selection-icon">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                        <h3 style="margin-bottom: 12px; color: #ffffff;">Ready to Trade</h3>
+                                        <p>Select an instrument from Market Watch to begin professional trading</p>
+                                        <div style="margin-top: 24px; font-size: 12px; color: #8896ab;">
+                                            <div>✓ Advanced risk management</div>
+                                            <div>✓ Real-time execution</div>
+                                            <div>✓ Professional tools</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Open Positions Panel -->
+                    <div class="trading-container" style="margin-top: 24px;">
+                        <div class="trading-header">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3 class="trading-title" style="font-size: 18px; margin-bottom: 4px;">Open Positions</h3>
+                                    <p class="trading-subtitle">Active trades and P&L monitoring</p>
+                                </div>
+                                <button onclick="refreshPositions()" style="padding: 10px 16px; background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 24px;">
+                            <div id="openPositionsContainer">
+                                <div class="loading" id="positionsLoader" style="margin: 40px 0;">
+                                    <div class="spinner"></div>
+                                    Loading positions...
+                                </div>
+                                <div id="openPositionsList" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Trading Modal - Tamamen Yenilenmiş -->
+                <div id="tradingModal" class="trading-modal-enhanced" style="display: none;">
+                    <div class="modal-overlay" onclick="closeTradingModal()"></div>
+                    <div class="modal-container-enhanced">
+                        <!-- Header -->
+                        <div class="modal-header-enhanced">
+                            <div class="coin-info">
+                                <div class="coin-icon-container">
+                                    <i class="fab fa-bitcoin" id="modalCoinIcon"></i>
+                                </div>
+                                <div class="coin-details">
+                                    <h2 id="modalCoinName">Bitcoin</h2>
+                                    <span id="modalCoinSymbol">BTC</span>
+                                </div>
+                                <div class="price-info">
+                                    <div class="current-price" id="modalCoinPrice">₺1,350,000</div>
+                                    <div class="price-change positive" id="modalCoinChange">+2.45%</div>
+                                </div>
+                            </div>
+                            <button class="close-btn" onclick="closeTradingModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Trading Form -->
+                        <div class="modal-body-enhanced">
+                            <!-- Direction Buttons -->
+                            <div class="direction-buttons">
+                                <button class="direction-btn buy-btn active" data-direction="buy">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>SATIN AL</span>
+                                    <small id="buyPrice">₺1,350,000</small>
+                                </button>
+                                <button class="direction-btn sell-btn" data-direction="sell">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>SATIŞ YAP</span>
+                                    <small id="sellPrice">₺1,348,000</small>
+                                </button>
+                            </div>
+                            
+                            <!-- Trading Mode Selection -->
+                            <div class="trading-mode-selection">
+                                <div class="mode-tabs">
+                                    <button class="mode-tab active" data-mode="spot">
+                                        <i class="fas fa-exchange-alt"></i>
+                                        <span>Spot</span>
+                                    </button>
+                                    <button class="mode-tab" data-mode="leverage">
+                                        <i class="fas fa-chart-line"></i>
+                                        <span>Kaldıraçlı</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Leverage Selection (Only for leverage mode) -->
+                            <div class="leverage-selection" id="leverageSelection" style="display: none;">
+                                <div class="leverage-header">
+                                    <label>Kaldıraç Oranı</label>
+                                    <div class="leverage-info">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Yüksek kaldıraç yüksek risk taşır</span>
+                                    </div>
+                                </div>
+                                <div class="leverage-buttons">
+                                    <button class="leverage-btn active" data-leverage="1">1x</button>
+                                    <button class="leverage-btn" data-leverage="2">2x</button>
+                                    <button class="leverage-btn" data-leverage="5">5x</button>
+                                    <button class="leverage-btn" data-leverage="10">10x</button>
+                                </div>
+                                <div class="position-type-selection">
+                                    <button class="position-btn long-btn active" data-position="long">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>Long (Yükseliş)</span>
+                                    </button>
+                                    <button class="position-btn short-btn" data-position="short">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span>Short (Düşüş)</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Input Tabs -->
+                            <div class="input-tabs">
+                                <button class="input-tab active" data-tab="amount">Miktar</button>
+                                <button class="input-tab" data-tab="total">Toplam ₺</button>
+                            </div>
+                            
+                            <!-- Amount Input -->
+                            <div class="input-section" id="amountSection">
+                                <div class="input-group-enhanced">
+                                    <label>Alınacak/Satılacak Miktar</label>
+                                    <div class="input-with-suffix">
+                                        <input type="number" id="coinAmount" placeholder="0.00000000" step="0.00000001" min="0">
+                                        <span class="suffix" id="quantitySuffix">BTC</span>
+                                    </div>
+                                </div>
+                                <div class="percentage-buttons">
+                                    <button class="percent-btn" data-percent="25">25%</button>
+                                    <button class="percent-btn" data-percent="50">50%</button>
+                                    <button class="percent-btn" data-percent="75">75%</button>
+                                    <button class="percent-btn" data-percent="100">Tümü</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Total Input -->
+                            <div class="input-section" id="totalSection" style="display: none;">
+                                <div class="input-group-enhanced">
+                                    <label>Harcanacak/Alınacak Tutar</label>
+                                    <div class="input-with-suffix">
+                                        <input type="number" id="totalAmount" placeholder="0.00" step="0.01" min="0">
+                                        <span class="suffix">₺</span>
+                                    </div>
+                                </div>
+                                <div class="percentage-buttons">
+                                    <button class="percent-btn" data-percent="25">25%</button>
+                                    <button class="percent-btn" data-percent="50">50%</button>
+                                    <button class="percent-btn" data-percent="75">75%</button>
+                                    <button class="percent-btn" data-percent="100">Tümü</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Transaction Summary -->
+                            <div class="transaction-summary">
+                                <div class="summary-header">
+                                    <h4>İşlem Özeti</h4>
+                                </div>
+                                <div class="summary-rows">
+                                    <div class="summary-row">
+                                        <span>Coin Fiyatı:</span>
+                                        <span id="currentCoinPrice">₺1,350,000.00</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>Miktar:</span>
+                                        <span id="calculatedAmount">0.00000000 BTC</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>İşlem Tutarı:</span>
+                                        <span id="calculatedTotal">₺0.00</span>
+                                    </div>
+                                    
+                                    <!-- Leverage-specific rows -->
+                                    <div class="leverage-summary-rows" id="leverageSummaryRows" style="display: none;">
+                                        <div class="summary-row">
+                                            <span>Kaldıraç Oranı:</span>
+                                            <span id="leverageRatio">1x</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span>Pozisyon Büyüklüğü:</span>
+                                            <span id="positionSize">0.00000000 BTC</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span>Liquidation Fiyatı:</span>
+                                            <span id="liquidationPrice">₺0.00</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span>Yatırılan Miktar:</span>
+                                            <span id="investedAmount">₺0.00</span>
+                                        </div>
+                                        <div class="summary-divider"></div>
+                                    </div>
+                                    
+                                    <div class="summary-row">
+                                        <span>Komisyon (0.1%):</span>
+                                        <span id="calculatedFee">₺0.00</span>
+                                    </div>
+                                    <div class="summary-divider"></div>
+                                    <div class="summary-row total-row">
+                                        <span>Toplam Tutar:</span>
+                                        <span id="finalTotal">₺0.00</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>Mevcut Bakiye:</span>
+                                        <span id="currentBalance">₺0.00</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>Kalan Bakiye:</span>
+                                        <span id="remainingBalance">₺0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Execute Button -->
+                            <button id="executeOrderBtn" class="execute-btn buy-order" disabled>
+                                <i class="fas fa-shopping-cart"></i>
+                                <span id="executeText">BTC Satın Al</span>
+                            </button>
+                            
+                            <!-- Balance Warning -->
+                            <div id="balanceWarning" class="balance-warning" style="display: none;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Yetersiz bakiye</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <section class="content-section" id="recommendations">
+                    <div class="section-header">
+                        <h2 class="section-title">Yatırım Tavsiyeleri</h2>
+                        <p class="section-subtitle">AI destekli öneriler</p>
+                    </div>
+                    <div class="card">
+                        <p>Tavsiye sistemi yakında eklenecek...</p>
+                    </div>
+                </section>
+                
+                <section class="content-section" id="wallet">
+                    <div class="section-header">
+                        <h2 class="section-title">Cüzdan</h2>
+                        <p class="section-subtitle">Para yatır/çek</p>
+                    </div>
+                    <div class="card">
+                        <p>Cüzdan işlemleri yakında eklenecek...</p>
+                    </div>
+                </section>
+                
+                <section class="content-section" id="positions">
+                    <div class="section-header">
+                        <h2 class="section-title">Kaldıraçlı Pozisyonlar</h2>
+                        <p class="section-subtitle">Açık pozisyonlarınız ve kar/zarar durumu</p>
+                    </div>
+                    
+                    <!-- Modern Pozisyon Özeti -->
+                    <div class="positions-summary-grid">
+                        <div class="position-stat-card active-positions">
+                            <div class="position-stat-header">
+                                <div class="position-stat-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="position-stat-trend" id="positionsTrend">
+                                    <i class="fas fa-arrow-up"></i>
+                                </div>
+                            </div>
+                            <div class="position-stat-content">
+                                <h3 class="position-stat-value" id="totalPositions">0</h3>
+                                <p class="position-stat-label">Açık Pozisyon</p>
+                                <div class="position-stat-change" id="positionsChange">Bu hafta: +0</div>
+                            </div>
+                        </div>
+                        
+                        <div class="position-stat-card total-investment">
+                            <div class="position-stat-header">
+                                <div class="position-stat-icon">
+                                    <i class="fas fa-coins"></i>
+                                </div>
+                                <div class="position-stat-badge" id="newInvestmentBadge">₺0</div>
+                            </div>
+                            <div class="position-stat-content">
+                                <h3 class="position-stat-value" id="totalInvested">₺0</h3>
+                                <p class="position-stat-label">Toplam Yatırım</p>
+                                <div class="position-stat-change" id="investmentChange">Ortalama: ₺0</div>
+                            </div>
+                        </div>
+                        
+                        <div class="position-stat-card total-pnl">
+                            <div class="position-stat-header">
+                                <div class="position-stat-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="position-stat-trend" id="pnlTrend">
+                                    <i class="fas fa-arrow-up"></i>
+                                </div>
+                            </div>
+                            <div class="position-stat-content">
+                                <h3 class="position-stat-value" id="totalUnrealizedPnL">₺0</h3>
+                                <p class="position-stat-label">Gerçekleşmemiş K/Z</p>
+                                <div class="position-stat-change" id="pnlPercentage">0%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="position-stat-card best-position">
+                            <div class="position-stat-header">
+                                <div class="position-stat-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="position-stat-trend up">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                            </div>
+                            <div class="position-stat-content">
+                                <h3 class="position-stat-value" id="bestPositionValue">-</h3>
+                                <p class="position-stat-label">En İyi Pozisyon</p>
+                                <div class="position-stat-change" id="bestPositionChange">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+
+
+
+                    <!-- Basit Pozisyonlar Paneli -->
+                    <div class="simple-positions-container">
+                        <div class="simple-positions-header">
+                            <div class="positions-title-section">
+                                <h3 class="positions-main-title">
+                                    <i class="fas fa-chart-line"></i>
+                                    Açık Pozisyonlar
+                                </h3>
+                                <p class="positions-subtitle">Kaldıraçlı işlemleriniz</p>
+                            </div>
+                            <button class="simple-refresh-btn" onclick="refreshPositions()">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Yenile</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Pozisyon Listesi -->
+                        <div id="positionsTable" class="simple-positions-list">
+                            <!-- Position items will be inserted here -->
+                        </div>
+                        
+                        <!-- Loading State -->
+                        <div id="positionsLoader" class="positions-loading" style="display: none;">
+                            <div class="spinner"></div>
+                            <p>Pozisyonlar yükleniyor...</p>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div id="positionsEmpty" class="positions-empty" style="display: none;">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>Henüz Açık Pozisyonunuz Yok</h3>
+                            <p>Kaldıraçlı işlem yapmak için piyasalar sayfasından coin seçebilirsiniz.</p>
+                            <button onclick="showSection('markets')" class="empty-action-btn">
+                                <i class="fas fa-plus"></i> Pozisyon Aç
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Modern Pozisyon Geçmişi -->
+                    <div class="position-history-container">
+                        <div class="position-history-header">
+                            <div class="position-history-title-section">
+                                <h3 class="position-history-main-title">
+                                    <i class="fas fa-history"></i>
+                                    Pozisyon Geçmişi
+                                </h3>
+                                <p class="position-history-subtitle">Geçmiş işlemleriniz ve gerçekleşen kar/zarar durumu</p>
+                            </div>
+                            <div class="position-history-controls">
+                                <div class="history-filter-buttons">
+                                    <button class="history-filter-btn active" data-filter="all">Tümü</button>
+                                    <button class="history-filter-btn" data-filter="profitable">Karlı</button>
+                                    <button class="history-filter-btn" data-filter="loss">Zararlı</button>
+                                </div>
+                                <button class="history-refresh-btn" onclick="loadPositionHistory()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span>Yenile</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Geçmiş Özet Kartları -->
+                        <div class="history-summary-grid">
+                            <div class="history-stat-card total-trades">
+                                <div class="history-stat-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="history-stat-content">
+                                    <h4 class="history-stat-value" id="totalTrades">0</h4>
+                                    <p class="history-stat-label">Toplam İşlem</p>
+                                </div>
+                            </div>
+                            
+                            <div class="history-stat-card win-rate">
+                                <div class="history-stat-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="history-stat-content">
+                                    <h4 class="history-stat-value" id="winRate">0%</h4>
+                                    <p class="history-stat-label">Başarı Oranı</p>
+                                </div>
+                            </div>
+                            
+                            <div class="history-stat-card total-pnl">
+                                <div class="history-stat-icon">
+                                    <i class="fas fa-coins"></i>
+                                </div>
+                                <div class="history-stat-content">
+                                    <h4 class="history-stat-value" id="totalHistoryPnL">₺0</h4>
+                                    <p class="history-stat-label">Toplam K/Z</p>
+                                </div>
+                            </div>
+                            
+                            <div class="history-stat-card avg-pnl">
+                                <div class="history-stat-icon">
+                                    <i class="fas fa-calculator"></i>
+                                </div>
+                                <div class="history-stat-content">
+                                    <h4 class="history-stat-value" id="avgPnL">₺0</h4>
+                                    <p class="history-stat-label">Ortalama K/Z</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Geçmiş Listesi -->
+                        <div class="position-history-list">
+                            <!-- Loading State -->
+                            <div id="historyLoader" class="history-loading" style="display: none;">
+                                <div class="spinner"></div>
+                                <p>Geçmiş yükleniyor...</p>
+                            </div>
+                            
+                            <!-- Empty State -->
+                            <div id="historyEmpty" class="history-empty" style="display: none;">
+                                <i class="fas fa-history"></i>
+                                <h3>Henüz Pozisyon Geçmişiniz Yok</h3>
+                                <p>İlk kaldıraçlı işleminizi yaptığınızda geçmiş burada görünecek.</p>
+                            </div>
+                            
+                            <!-- History Items -->
+                            <div id="historyItems" class="history-items-container">
+                                <!-- History items will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="content-section" id="profile">
+                    <!-- Modern Mobile-First Profile Header -->
+                    <div class="modern-profile-header">
+                        <div class="profile-hero-section">
+                            <div class="profile-background-gradient"></div>
+                            <div class="profile-hero-content">
+                                <div class="profile-avatar-section">
+                                    <div class="profile-avatar-container">
+                                        <div class="profile-avatar" id="profileAvatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="avatar-status-indicator online"></div>
+                                        <button class="edit-avatar-btn" onclick="editProfileAvatar()">
+                                            <i class="fas fa-camera"></i>
+                                        </button>
+                                    </div>
+                                    <div class="profile-user-info">
+                                        <h2 class="profile-username" id="profileUsername">Kullanıcı</h2>
+                                        <p class="profile-user-level" id="profileUserLevel">Premium Member</p>
+                                        <div class="profile-join-date" id="profileJoinDate">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <span>Üye olma: Ocak 2024</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Enhanced Balance Display -->
+                                <div class="profile-balance-hero">
+                                    <div class="balance-hero-card">
+                                        <div class="balance-label">Toplam Bakiye</div>
+                                        <div class="balance-amount" id="profileBalanceAmount">₺0.00</div>
+                                        <div class="balance-change" id="profileBalanceChange">+₺0.00 (0%)</div>
+                                        <div class="balance-quick-actions">
+                                            <button class="balance-action-btn deposit" onclick="showSection('deposit')">
+                                                <i class="fas fa-plus"></i>
+                                                <span>Para Yatır</span>
+                                            </button>
+                                            <button class="balance-action-btn withdraw" onclick="showWithdrawalComingSoon()">
+                                                <i class="fas fa-minus"></i>
+                                                <span>Para Çek</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modern Stats Grid -->
+                    <div class="modern-stats-container">
+                        <div class="stats-grid-mobile">
+                            <div class="modern-stat-card trades">
+                                <div class="stat-card-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="stat-card-content">
+                                    <div class="stat-card-value" id="modernTotalTrades">0</div>
+                                    <div class="stat-card-label">Toplam İşlem</div>
+                                    <div class="stat-card-trend">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>Bu ay: +5</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modern-stat-card profit">
+                                <div class="stat-card-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="stat-card-content">
+                                    <div class="stat-card-value" id="modernProfitLoss">₺0</div>
+                                    <div class="stat-card-label">Toplam K/Z</div>
+                                    <div class="stat-card-trend positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>+12.5%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modern-stat-card portfolio">
+                                <div class="stat-card-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <div class="stat-card-content">
+                                    <div class="stat-card-value" id="modernPortfolioValue">₺0</div>
+                                    <div class="stat-card-label">Portföy Değeri</div>
+                                    <div class="stat-card-trend">
+                                        <i class="fas fa-coins"></i>
+                                        <span>5 varlık</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modern-stat-card membership">
+                                <div class="stat-card-icon">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div class="stat-card-content">
+                                    <div class="stat-card-value" id="modernMemberSince">3</div>
+                                    <div class="stat-card-label">Ay Üye</div>
+                                    <div class="stat-card-trend">
+                                        <i class="fas fa-star"></i>
+                                        <span>Aktif</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modern Profile Details -->
+                    <div class="modern-profile-details">
+                        <div class="profile-details-container">
+                            <div class="profile-details-header">
+                                <h3 class="profile-details-title">
+                                    <i class="fas fa-user-circle"></i>
+                                    Hesap Bilgileri
+                                </h3>
+                                <button class="edit-profile-btn" onclick="editProfileInfo()">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Düzenle</span>
+                                </button>
+                            </div>
+                            
+                            <div class="profile-info-grid" id="modernUserInfo">
+                                <div class="loading-state">
+                                    <div class="modern-spinner"></div>
+                                    <p>Profil bilgileri yükleniyor...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legacy Profile Info (Hidden but preserved for JS compatibility) -->
+                    <div id="userInfo" style="display: none;"></div>
+                    <div id="balanceInfo" style="display: none;"></div>
+                    <div id="totalTrades" style="display: none;">0</div>
+                    <div id="profitLoss" style="display: none;">₺0</div>
+                    <div id="memberSince" style="display: none;">0</div>
+
+                    <!-- Modern Transaction History -->
+                    <div class="modern-transaction-container">
+                        <div class="transaction-container-header">
+                            <div class="transaction-title-section">
+                                <h3 class="transaction-main-title">
+                                    <i class="fas fa-history"></i>
+                                    İşlem Geçmişi
+                                </h3>
+                                <p class="transaction-subtitle">Son işlemleriniz ve detayları</p>
+                            </div>
+                            <div class="transaction-controls">
+                                <div class="transaction-filter-tabs">
+                                    <button class="filter-tab active" data-filter="all">Tümü</button>
+                                    <button class="filter-tab" data-filter="buy">Alım</button>
+                                    <button class="filter-tab" data-filter="sell">Satım</button>
+                                    <button class="filter-tab" data-filter="deposit">Yatırım</button>
+                                </div>
+                                <button class="modern-refresh-btn" onclick="loadTransactionHistory()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span>Yenile</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="modern-transaction-list" id="modernTransactionHistory">
+                            <div class="loading-state">
+                                <div class="modern-spinner"></div>
+                                <p>İşlem geçmişi yükleniyor...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legacy Transaction History (Hidden but preserved for JS compatibility) -->
+                    <div id="transactionHistory" style="display: none;"></div>
+
+                    <!-- Quick Actions Panel -->
+                    <div class="profile-quick-actions">
+                        <div class="quick-actions-header">
+                            <h3>Hızlı İşlemler</h3>
+                        </div>
+                        <div class="quick-actions-grid">
+                            <button class="quick-action-btn" onclick="showSection('markets')">
+                                <div class="quick-action-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="quick-action-text">
+                                    <span>Coin Al</span>
+                                    <small>Piyasalara git</small>
+                                </div>
+                            </button>
+
+                            <button class="quick-action-btn" onclick="showSection('portfolio')">
+                                <div class="quick-action-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <div class="quick-action-text">
+                                    <span>Portföy</span>
+                                    <small>Varlıklarım</small>
+                                </div>
+                            </button>
+
+                            <button class="quick-action-btn" onclick="showSection('deposit')">
+                                <div class="quick-action-icon">
+                                    <i class="fas fa-plus-circle"></i>
+                                </div>
+                                <div class="quick-action-text">
+                                    <span>Para Yatır</span>
+                                    <small>Bakiye ekle</small>
+                                </div>
+                            </button>
+
+                            <button class="quick-action-btn" onclick="showSection('positions')">
+                                <div class="quick-action-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="quick-action-text">
+                                    <span>Pozisyonlar</span>
+                                    <small>Kaldıraçlı işlemler</small>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo();
+            setupNavigation();
+            setupDepositForm(); // Para yatırma formunu başlat
+            
+            // Market initialization'ı geciktir
+            setTimeout(() => {
+                refreshMarketData(); // Sayfa yüklendiğinde piyasaları yükle
+            }, 1000);
+            
+            initTrading(); // Trading sistemini başlat
+            refreshPositions(); // Pozisyonları yükle
+            
+            // Arama kutusu için event listener - null check ekle
+            const searchInput = document.getElementById('coinSearch');
+            if (searchInput) {
+                let searchTimeout;
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        refreshMarketData();
+                    }, 500); // 500ms gecikme ile arama yap
+                });
+            }
+        });
+
+        // Navigasyon sistemi
+        function setupNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-section');
+            const pageTitle = document.getElementById('pageTitle');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetSection = this.dataset.section;
+                    
+                    // Aktif nav linkini güncelle
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Bölümleri gizle/göster
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(targetSection).classList.add('active');
+                    
+                    // Sayfa başlığını güncelle
+                    const titles = {
+                        'dashboard': 'Dashboard',
+                        'portfolio': 'Portföyüm',
+                        'markets': 'Piyasalar',
+                        'trading': 'İşlem Yap',
+                        'positions': 'Pozisyonlar',
+                        'recommendations': 'Yatırım Tavsiyeleri',
+                        'wallet': 'Cüzdan',
+                        'deposit': 'Para Yatır',
+                        'profile': 'Profil'
+                    };
+                    pageTitle.textContent = titles[targetSection] || 'Dashboard';
+                    
+                    // Section-specific loading
+                    if (targetSection === 'deposit') {
+                        loadRecentDeposits();
+                        stopPriceUpdates(); // Diğer sekmelerde fiyat güncellemesini durdur
+                    } else if (targetSection === 'portfolio') {
+                        loadPortfolio();
+                        stopPriceUpdates();
+                    } else if (targetSection === 'positions') {
+                        loadPositions();
+                        loadPositionHistory(); // Pozisyon geçmişini de yükle
+                        startPriceUpdates(); // Pozisyonlar sekmesinde otomatik fiyat güncelleme başlat
+                        initCandlestickChart(); // Candlestick grafiği başlat
+                    } else if (targetSection === 'profile') {
+                        loadTransactionHistory();
+                        stopPriceUpdates();
+                    } else {
+                        stopPriceUpdates(); // Diğer tüm sekmelerde durdur
+                    }
+                });
+            });
+        }
+
+        // Kullanıcı bilgilerini yükle
+        function loadUserInfo() {
+            fetch('backend/public/profile.php', {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(r => r.json())
+            .then(data => {
+                if(data.success) {
+                    console.log('✅ Kullanıcı bilgileri yüklendi:', data.user);
+                    
+                    // Bakiye göster
+                    const balance = parseFloat(data.user.balance) || 0;
+                    const balanceFormatted = balance.toLocaleString('tr-TR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    
+                    document.getElementById('userBalance').innerHTML = 
+                        `<i class="fas fa-wallet"></i> ₺${balanceFormatted}`;
+                    
+                    document.getElementById('totalBalance').innerHTML = 
+                        `<h1 style="font-size: 2rem; color: #00d4aa;">₺${balanceFormatted}</h1>`;
+                    
+                    // Avatar harfi - element kontrolü ekle (user-avatar elementi kaldırıldığı için bu kod devre dışı)
+                    // const firstLetter = data.user.username.charAt(0).toUpperCase();
+                    // const userAvatarElement = document.getElementById('userAvatar');
+                    // if (userAvatarElement) {
+                    //     userAvatarElement.textContent = firstLetter;
+                    // }
+                    
+                    // Profil bilgileri
+                    document.getElementById('userInfo').innerHTML = `
+                        <div style="line-height: 1.8;">
+                            <p><strong>Kullanıcı Adı:</strong> ${data.user.username || 'N/A'}</p>
+                            <p><strong>Email:</strong> ${data.user.email || 'N/A'}</p>
+                            <p><strong>Ad Soyad:</strong> ${data.user.ad_soyad || 'Belirtilmemiş'}</p>
+                            <p><strong>Kayıt Tarihi:</strong> ${data.user.created_at ? new Date(data.user.created_at).toLocaleDateString('tr-TR') : 'N/A'}</p>
+                            <p><strong>Son Giriş:</strong> ${data.user.son_giris ? new Date(data.user.son_giris).toLocaleDateString('tr-TR') : 'İlk giriş'}</p>
+                            <p><strong>Hesap Tipi:</strong> ${data.user.role === 'admin' ? 'Yönetici' : 'Standart Kullanıcı'}</p>
+                            <p><strong>Toplam Bakiye:</strong> <span style="color: #00d4aa; font-weight: 600;">₺${balanceFormatted}</span></p>
+                        </div>
+                    `;
+                    
+                    // Bakiye kartı
+                    document.getElementById('balanceInfo').innerHTML = `
+                        <div style="text-align: center;">
+                            <h1 style="font-size: 2.5rem; color: #00d4aa; margin-bottom: 10px;">₺${balanceFormatted}</h1>
+                            <p style="color: #8b8fa3; margin-bottom: 15px;">Mevcut Bakiye</p>
+                            <div style="display: flex; gap: 10px; justify-content: center;">
+                                <button onclick="showSection('deposit')" style="background: #00d4aa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                                    <i class="fas fa-plus"></i> Para Yatır
+                                </button>
+                                <button onclick="showSection('withdrawal')" style="background: #2d3748; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                                    <i class="fas fa-minus"></i> Para Çek
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // İstatistikler
+                    document.getElementById('totalTrades').textContent = '12';
+                    document.getElementById('profitLoss').textContent = '₺2,450';
+                    document.getElementById('memberSince').textContent = '3 ay';
+                    
+                    // İşlem geçmişi ve mevduatları yükle
+                    loadTransactionHistory();
+                    if (typeof loadRecentDeposits === 'function') {
+                        loadRecentDeposits();
+                    }
+                    
+                    // Diğer dashboard verilerini simüle et
+                    setTimeout(() => {
+                        document.getElementById('dailyPnl').innerHTML = 
+                            `<h2 style="color: #00d4aa;">+₺156.24</h2><small style="color: #8b8fa3;">+2.34%</small>`;
+                        
+                        document.getElementById('openPositions').innerHTML = 
+                            `<h2 style="color: #ffffff;">3</h2><small style="color: #8b8fa3;">Aktif pozisyon</small>`;
+                        
+                        document.getElementById('recentTrades').innerHTML = 
+                            `<p style="color: #8b8fa3;">Henüz işlem yapılmamış</p>`;
+                        
+                        document.getElementById('marketSummary').innerHTML = 
+                            `<p style="color: #8b8fa3;">Piyasa verileri yükleniyor...</p>`;
+                    }, 1000);
+                    
+                } else {
+                    console.error('❌ Kullanıcı girişi gerekli:', data.message);
+                    showNotification('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                }
+            })
+            .catch(err => {
+                console.error('❌ API Hatası:', err);
+                document.getElementById('totalBalance').innerHTML = '<span style="color: #ef4444;">Bağlantı Hatası</span>';
+                document.getElementById('userBalance').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Hata';
+                showNotification('Bağlantı hatası. Lütfen sayfayı yenileyin.', 'error');
+            });
+        }
+
+        // İşlem geçmişi yükle
+        async function loadTransactionHistory() {
+            const historyContainer = document.getElementById('transactionHistory');
+            
+            // Loading state göster
+            historyContainer.innerHTML = `
+                <div class="loading" style="text-align: center; padding: 40px;">
+                    <div class="spinner"></div>
+                    <p>İşlem geçmişi yükleniyor...</p>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch('backend/user/transaction_history.php?action=list&limit=20', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                console.log('✅ Transaction history loaded:', result);
+                
+                if (result.success && result.data.transactions) {
+                    displayTransactionHistory(result.data);
+                } else {
+                    // Boş durum
+                    historyContainer.innerHTML = `
+                        <div style="text-align: center; padding: 60px 20px; color: #8b8fa3;">
+                            <i class="fas fa-history" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                            <h3 style="color: #ffffff; margin-bottom: 12px;">Henüz İşlem Yok</h3>
+                            <p>Henüz hiç işlem yapmamışsınız. İlk işleminizi yapmak için piyasalar sayfasını ziyaret edin.</p>
+                        </div>
+                    `;
+                }
+                
+                // İstatistikleri güncelle
+                if (result.data.stats) {
+                    updateProfileStats(result.data.stats);
+                }
+                
+            } catch (error) {
+                console.error('Transaction history loading error:', error);
+                historyContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #ef4444;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 12px;"></i><br>
+                        İşlem geçmişi yüklenirken hata oluştu.<br>
+                        <button onclick="loadTransactionHistory()" style="background: #4fc3f7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px;">
+                            Tekrar Dene
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        // İşlem geçmişini göster
+        function displayTransactionHistory(data) {
+            const historyContainer = document.getElementById('transactionHistory');
+            const transactions = data.transactions;
+            
+            if (!transactions || transactions.length === 0) {
+                historyContainer.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #8b8fa3;">
+                        <i class="fas fa-history" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                        <h3 style="color: #ffffff; margin-bottom: 12px;">İşlem Geçmişi Boş</h3>
+                        <p>Henüz hiç işlem yapmamışsınız.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let historyHTML = '';
+            transactions.forEach(transaction => {
+                const isPositive = parseFloat(transaction.amount) > 0;
+                const amount = parseFloat(transaction.amount);
+                const formattedAmount = (isPositive ? '+' : '') + '₺' + Math.abs(amount).toLocaleString('tr-TR', { minimumFractionDigits: 2 });
+                
+                // İşlem tipine göre icon belirle
+                let icon = 'fas fa-exchange-alt';
+                let iconColor = '#4fc3f7';
+                
+                if (transaction.type === 'coin_trade') {
+                    icon = transaction.sub_type === 'al' ? 'fas fa-arrow-down' : 'fas fa-arrow-up';
+                    iconColor = transaction.sub_type === 'al' ? '#00d4aa' : '#ef4444';
+                } else if (transaction.type === 'deposit') {
+                    icon = 'fas fa-plus-circle';
+                    iconColor = '#00d4aa';
+                } else if (transaction.type === 'withdrawal') {
+                    icon = 'fas fa-minus-circle';
+                    iconColor = '#ef4444';
+                }
+                
+                // Status badge
+                let statusBadge = '';
+                if (transaction.sub_type === 'beklemede') {
+                    statusBadge = '<span class="status-badge pending">Beklemede</span>';
+                } else if (transaction.sub_type === 'onaylandi' || transaction.sub_type === 'al' || transaction.sub_type === 'sat') {
+                    statusBadge = '<span class="status-badge approved">Tamamlandı</span>';
+                } else if (transaction.sub_type === 'reddedildi') {
+                    statusBadge = '<span class="status-badge rejected">Reddedildi</span>';
+                }
+                
+                historyHTML += `
+                    <div class="transaction-item" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 40px; height: 40px; background: rgba(${iconColor.substring(1, 3)}, ${iconColor.substring(3, 5)}, ${iconColor.substring(5, 7)}, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="${icon}" style="color: ${iconColor}; font-size: 16px;"></i>
+                            </div>
+                            <div class="transaction-info">
+                                <div class="transaction-type" style="font-weight: 600; color: #ffffff; margin-bottom: 4px;">
+                                    ${transaction.description}
+                                </div>
+                                <div class="transaction-details" style="font-size: 12px; color: #8b8fa3;">
+                                    ${new Date(transaction.date).toLocaleDateString('tr-TR', { 
+                                        year: 'numeric', 
+                                        month: 'short', 
+                                        day: 'numeric', 
+                                        hour: '2-digit', 
+                                        minute: '2-digit' 
+                                    })}
+                                    ${statusBadge}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="transaction-amount" style="font-weight: 600; color: ${isPositive ? '#00d4aa' : '#ef4444'};">
+                            ${formattedAmount}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            historyContainer.innerHTML = historyHTML;
+        }
+        
+        // Profil istatistiklerini güncelle
+        function updateProfileStats(stats) {
+            if (stats.total_trades) {
+                document.getElementById('totalTrades').textContent = stats.total_trades;
+            }
+            
+            // Kar/zarar hesapla (gelecekte portföy verisi ile)
+            const profitLoss = (stats.total_sell_amount || 0) - (stats.total_buy_amount || 0);
+            document.getElementById('profitLoss').textContent = `₺${profitLoss.toLocaleString('tr-TR')}`;
+            document.getElementById('profitLoss').style.color = profitLoss >= 0 ? '#00d4aa' : '#ef4444';
+        }
+
+        // Çıkış yap
+        function logout() {
+            fetch('backend/public/logout.php', {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(() => {
+                window.location.href = 'login.html';
+            });
+        }
+
+        // Para yatırma formu fonksiyonları
+        function setupDepositForm() {
+            const depositForm = document.getElementById('deposit-form');
+            const depositMethod = document.getElementById('deposit-method');
+            
+            // Yöntem değişikliğinde form alanlarını göster/gizle
+            depositMethod.addEventListener('change', function() {
+                toggleMethodFields(this.value);
+            });
+            
+            // Form gönderimi
+            depositForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitDepositRequest();
+            });
+            
+        }
+        
+        // Yöntem alanlarını göster/gizle
+        function toggleMethodFields(method) {
+            const methodFields = document.querySelectorAll('.method-fields');
+            methodFields.forEach(field => {
+                field.style.display = 'none';
+            });
+            
+            if (method) {
+                const selectedMethodFields = document.getElementById(method + '-fields');
+                if (selectedMethodFields) {
+                    selectedMethodFields.style.display = 'block';
+                }
+            }
+        }
+        
+        // Para yatırma talebi gönder
+        async function submitDepositRequest() {
+            const method = document.getElementById('deposit-method').value;
+            const amount = parseFloat(document.getElementById('deposit-amount').value);
+            const note = document.getElementById('deposit-note').value;
+            
+            if (!method) {
+                showNotification('Lütfen yatırma yöntemini seçin!', 'error');
+                return;
+            }
+            
+            if (!amount || amount < 10) {
+                showNotification('Minimum yatırım tutarı ₺10\'dur!', 'error');
+                return;
+            }
+            
+            if (amount > 50000) {
+                showNotification('Maksimum yatırım tutarı ₺50,000\'dir!', 'error');
+                return;
+            }
+            
+            // Yönteme göre ek alanları kontrol et
+            let detailBilgiler = {};
+            
+            if (method === 'papara') {
+                const paparaNumber = document.getElementById('papara-number').value;
+                if (!paparaNumber) {
+                    showNotification('Lütfen Papara numaranızı girin!', 'error');
+                    return;
+                }
+                detailBilgiler = { papara_number: paparaNumber };
+            } else if (['ziraat', 'garanti', 'isbank', 'akbank', 'yapikredi'].includes(method)) {
+                // Banka havalesi için sadece seçilen banka bilgisi
+                detailBilgiler = { selected_bank: method };
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('yontem', method);
+                formData.append('tutar', amount);
+                formData.append('detay_bilgiler', JSON.stringify(detailBilgiler));
+                if (note) formData.append('aciklama', note);
+                
+                const response = await fetch('backend/user/deposits.php?action=create', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(`Para yatırma talebiniz başarıyla gönderildi! Talep ID: ${data.data.id}`, 'success');
+                    document.getElementById('deposit-form').reset();
+                    toggleMethodFields(''); // Hide all method fields
+                    loadRecentDeposits(); // Reload recent deposits
+                } else {
+                    showNotification('Hata: ' + (data.error || 'Talep gönderilemedi'), 'error');
+                }
+            } catch (error) {
+                console.error('Para yatırma hatası:', error);
+                showNotification('Talep gönderilirken bir hata oluştu: ' + error.message, 'error');
+            }
+        }
+        
+        // Son para yatırma taleplerini yükle
+        async function loadRecentDeposits() {
+            const container = document.getElementById('recent-deposits');
+            
+            try {
+                const response = await fetch('backend/user/deposits.php?action=list', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    let depositsHTML = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+                    
+                    data.data.forEach(deposit => {
+                        const statusClass = deposit.durum === 'beklemede' ? 'status-pending' : 
+                                          deposit.durum === 'onaylandi' ? 'status-approved' : 'status-rejected';
+                        const statusText = deposit.durum === 'beklemede' ? 'Beklemede' : 
+                                         deposit.durum === 'onaylandi' ? 'Onaylandı' : 'Reddedildi';
+                        
+                        // Yöntem adını düzelt
+                        let methodName = deposit.yontem;
+                        const methodNames = {
+                            'papara': 'Papara',
+                            'ziraat': 'Ziraat Bankası',
+                            'garanti': 'Garanti BBVA',
+                            'isbank': 'İş Bankası',
+                            'akbank': 'Akbank',
+                            'yapikredi': 'Yapı Kredi'
+                        };
+                        methodName = methodNames[deposit.yontem] || methodName;
+                        
+                        depositsHTML += `
+                            <div style="background: rgba(255, 255, 255, 0.05); padding: 16px; border-radius: 12px; border-left: 4px solid ${deposit.durum === 'beklemede' ? '#fbbf24' : deposit.durum === 'onaylandi' ? '#00d4aa' : '#ef4444'};">
+                                <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 8px;">
+                                    <div>
+                                        <strong style="color: #ffffff;">${methodName}</strong>
+                                        <span style="margin-left: 12px; color: #8b8fa3;">₺${parseFloat(deposit.tutar).toLocaleString()}</span>
+                                    </div>
+                                    <span class="status-badge ${statusClass}" style="padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">${statusText}</span>
+                                </div>
+                                <div style="color: #8b8fa3; font-size: 12px;">
+                                    ${new Date(deposit.tarih).toLocaleDateString('tr-TR')} ${new Date(deposit.tarih).toLocaleTimeString('tr-TR')}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    depositsHTML += '</div>';
+                    container.innerHTML = depositsHTML;
+                } else {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #8b8fa3;">
+                            <i class="fas fa-info-circle" style="font-size: 24px; margin-bottom: 12px;"></i>
+                            <p>Henüz para yatırma talebiniz bulunmuyor.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Para yatırma talepleri yüklenirken hata:', error);
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #ef4444;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 12px;"></i>
+                        <p>Talepler yüklenirken bir hata oluştu.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Balance menüsü aç/kapat
+        function openBalanceMenu() {
+            // Mevcut menüyü kapat
+            closeBalanceMenu();
+            
+            // Menü HTML'i oluştur
+            const menuHTML = `
+                <div id="balanceMenu" class="balance-menu">
+                    <div class="balance-menu-overlay" onclick="closeBalanceMenu()"></div>
+                    <div class="balance-menu-content">
+                        <div class="balance-menu-header">
+                            <h3><i class="fas fa-wallet"></i> Cüzdan İşlemleri</h3>
+                            <button class="balance-menu-close" onclick="closeBalanceMenu()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="balance-menu-body">
+                            <div class="balance-menu-item" onclick="navigateToDeposit()">
+                                <div class="balance-menu-icon deposit">
+                                    <i class="fas fa-plus-circle"></i>
+                                </div>
+                                <div class="balance-menu-text">
+                                    <h4>Para Yatır</h4>
+                                    <p>Hesabınıza para yatırın</p>
+                                </div>
+                                <div class="balance-menu-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            <div class="balance-menu-item" onclick="showWithdrawalComingSoon()">
+                                <div class="balance-menu-icon withdrawal">
+                                    <i class="fas fa-minus-circle"></i>
+                                </div>
+                                <div class="balance-menu-text">
+                                    <h4>Para Çek</h4>
+                                    <p>Yakında gelecek</p>
+                                </div>
+                                <div class="balance-menu-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Menüyü sayfaya ekle
+            document.body.insertAdjacentHTML('beforeend', menuHTML);
+            
+            // Animasyon ile göster
+            setTimeout(() => {
+                const menu = document.getElementById('balanceMenu');
+                if (menu) {
+                    menu.style.opacity = '1';
+                    const content = menu.querySelector('.balance-menu-content');
+                    if (content) {
+                        content.style.transform = 'translateY(0)';
+                    }
+                }
+            }, 10);
+        }
+        
+        // Balance menüsünü kapat
+        function closeBalanceMenu() {
+            const existingMenu = document.getElementById('balanceMenu');
+            if (existingMenu) {
+                const content = existingMenu.querySelector('.balance-menu-content');
+                if (content) {
+                    content.style.transform = 'translateY(-20px)';
+                }
+                existingMenu.style.opacity = '0';
+                setTimeout(() => {
+                    existingMenu.remove();
+                }, 300);
+            }
+        }
+        
+        // Para yatırma sayfasına yönlendir
+        function navigateToDeposit() {
+            closeBalanceMenu();
+            
+            // Sol menüdeki "Para Yatır" linkini aktif et
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.section === 'deposit') {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Deposit bölümünü göster
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('deposit').classList.add('active');
+            
+            // Sayfa başlığını güncelle
+            document.getElementById('pageTitle').textContent = 'Para Yatır';
+            
+            // Para yatırma taleplerini yükle
+            if (typeof loadRecentDeposits === 'function') {
+                loadRecentDeposits();
+            }
+        }
+        
+        // Para çekme yakında gelecek uyarısı
+        function showWithdrawalComingSoon() {
+            closeBalanceMenu();
+            showNotification('Para çekme özelliği yakında gelecek!', 'info');
+        }
+
+        // Notification göster
+        function showNotification(message, type = 'info') {
+            // Notification container oluştur
+            let container = document.getElementById('notification-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notification-container';
+                container.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    max-width: 400px;
+                `;
+                document.body.appendChild(container);
+            }
+            
+            // Notification elemanı oluştur
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                background: ${type === 'success' ? '#00d4aa' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 16px 20px;
+                border-radius: 12px;
+                margin-bottom: 12px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            `;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            notification.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+            
+            container.appendChild(notification);
+            
+            // Animasyon
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Otomatik kaldır
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.mobile-overlay');
+            
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active');
+        }
+
+        // Close mobile menu
+        function closeMobileMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.mobile-overlay');
+            
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+        }
+
+        // Close mobile menu when clicking navigation items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', closeMobileMenu);
+        });
+
+        // Window resize event for responsive design
+        window.addEventListener('resize', function() {
+            // Re-render coins if needed
+            if (window.innerWidth <= 768) {
+                const mobileGrid = document.getElementById('mobileCoinsGrid');
+                if (mobileGrid && mobileGrid.children.length > 0) {
+                    // Mobile grid is already rendered, no need to re-render
+                }
+            } else {
+                const mobileGrid = document.getElementById('mobileCoinsGrid');
+                if (mobileGrid) {
+                    mobileGrid.style.display = 'none';
+                    document.getElementById('marketTable').style.display = 'block';
+                }
+            }
+        });
+
+         // Modern sistem - coins.php ile çalışır
+         async function fetchMarketData() {
+             const searchInput = document.getElementById('coinSearch') ? document.getElementById('coinSearch').value.toLowerCase() : '';
+             const marketLoader = document.getElementById('marketLoader');
+
+             try {
+                 // Loading state göster
+                 if (marketLoader) {
+                     marketLoader.style.display = 'flex';
+                     marketLoader.innerHTML = `
+                         <div style="text-align: center; padding: 40px;">
+                             <div style="width: 48px; height: 48px; border: 3px solid rgba(79, 195, 247, 0.3); border-top: 3px solid #4fc3f7; border-radius: 50%; margin: 0 auto 16px; animation: spin 1s linear infinite;"></div>
+                             <p style="color: #8896ab;">Piyasa verileri yükleniyor...</p>
+                         </div>
+                     `;
+                 }
+                 
+                 // coins.php endpoint'den veri çek - coins_hybrid.php kaldırıldı, sadece coins.php kullanılıyor
+                 let url = 'backend/user/coins.php';
+                 
+                 if (searchInput) {
+                     url += `?search=${encodeURIComponent(searchInput)}`;
+                 }
+                 
+                 const response = await fetch(url, {
+                     method: 'GET',
+                     credentials: 'include'
+                 });
+                 
+                 if (!response.ok) {
+                     throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                 }
+                 
+                 const result = await response.json();
+                 console.log('✅ Market data loaded:', result);
+
+                 if (result.success && result.data && Array.isArray(result.data) && result.data.length > 0) {
+                     // Modern card-based rendering kullan
+                     renderModernCoins(result.data);
+                     
+                     // Loader'ı gizle
+                     if (marketLoader) {
+                         marketLoader.style.display = 'none';
+                     }
+                     
+                     console.log(`📊 ${result.data.length} coin yüklendi`);
+                     
+                 } else if (result.success && result.coins && Array.isArray(result.coins) && result.coins.length > 0) {
+                     // Alternatif data yapısı - coins array
+                     renderModernCoins(result.coins);
+                     
+                     if (marketLoader) {
+                         marketLoader.style.display = 'none';
+                     }
+                     
+                     console.log(`📊 ${result.coins.length} coin yüklendi (coins array)`);
+                     
+                 } else {
+                     console.warn('❌ Coin verisi bulunamadı:', result);
+                     showNoCoinsMessage(searchInput);
+                     if (marketLoader) {
+                         marketLoader.style.display = 'none';
+                     }
+                 }
+                 
+             } catch (error) {
+                 console.error('❌ Error fetching market data:', error);
+                 showErrorMessage();
+             }
+         }
+         
+                 // refreshMarketData alias - geriye uyumluluk için
+        function refreshMarketData() {
+            return fetchMarketData();
+        }
+        
+        // Portföy yükle - Geliştirilmiş hata yakalama
+        async function loadPortfolio() {
+            const loader = document.getElementById('portfolioLoader');
+            const empty = document.getElementById('portfolioEmpty');
+            const table = document.getElementById('portfolioTable');
+            
+            // Loading state göster
+            if (loader) loader.style.display = 'block';
+            if (empty) empty.style.display = 'none';
+            if (table) table.style.display = 'none';
+            
+            try {
+                console.log('🔄 Starting portfolio load...');
+                
+                const response = await fetch('backend/user/trading.php?action=portfolio', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                console.log('📡 Portfolio response status:', response.status);
+                console.log('📡 Portfolio response headers:', response.headers);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // Response'u önce text olarak al, sonra JSON parse et
+                const responseText = await response.text();
+                console.log('📄 Raw portfolio response length:', responseText.length);
+                console.log('📄 Raw portfolio response preview:', responseText.substring(0, 500));
+                
+                // HTML içeriği kontrolü
+                if (responseText.trim().startsWith('<')) {
+                    console.error('❌ Server returned HTML instead of JSON');
+                    console.error('📄 HTML Content:', responseText.substring(0, 1000));
+                    throw new Error('Server returned HTML instead of JSON. This usually indicates a PHP error or redirect.');
+                }
+                
+                // Boş response kontrolü
+                if (!responseText.trim()) {
+                    console.error('❌ Empty response from server');
+                    throw new Error('Server returned empty response');
+                }
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('❌ JSON Parse Error:', parseError);
+                    console.error('📄 Response that failed to parse:', responseText);
+                    
+                    // JSON parse hatasının detayını analiz et
+                    let errorDetail = parseError.message;
+                    if (responseText.includes('Unexpected token \'<\'')) {
+                        errorDetail = 'Server returned HTML instead of JSON (likely a PHP error)';
+                    } else if (responseText.includes('PHP Fatal error')) {
+                        errorDetail = 'PHP Fatal Error occurred on server';
+                    } else if (responseText.includes('PHP Warning')) {
+                        errorDetail = 'PHP Warning occurred on server';
+                    }
+                    
+                    throw new Error(`JSON Parse Error: ${errorDetail}`);
+                }
+                
+                console.log('✅ Portfolio JSON parsed successfully:', result);
+                
+                if (result.success) {
+                    if (result.data && result.data.portfolio && Array.isArray(result.data.portfolio) && result.data.portfolio.length > 0) {
+                        console.log('📊 Displaying portfolio with', result.data.portfolio.length, 'items');
+                        displayPortfolio(result.data);
+                    } else {
+                        console.log('📭 Portfolio is empty, showing empty state');
+                        // Portföy boş
+                        if (loader) loader.style.display = 'none';
+                        if (empty) empty.style.display = 'block';
+                        
+                        // Sıfır değerleri göster
+                        const totalValue = document.getElementById('portfolioTotalValue');
+                        const profitLoss = document.getElementById('portfolioProfitLoss');
+                        const profitPercent = document.getElementById('profitLossPercent');
+                        const coinCount = document.getElementById('portfolioCoinCount');
+                        
+                        if (totalValue) totalValue.textContent = '₺0';
+                        if (profitLoss) profitLoss.textContent = '₺0';
+                        if (profitPercent) profitPercent.textContent = '0%';
+                        if (coinCount) coinCount.textContent = '0';
+                    }
+                } else {
+                    throw new Error(result.message || result.error || 'Portfolio API returned success: false');
+                }
+                
+            } catch (error) {
+                console.error('❌ Portfolio loading error:', error);
+                
+                // Loading'i gizle
+                if (loader) loader.style.display = 'none';
+                if (empty) empty.style.display = 'none';
+                if (table) table.style.display = 'block';
+                
+                // Hata türüne göre farklı mesajlar ve çözümler
+                let errorMessage = 'Portföy verilerini yüklerken hata oluştu.';
+                let errorDetails = '';
+                let technicalDetails = error.message;
+                
+                if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+                    errorMessage = 'Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.';
+                    errorDetails = '<button onclick="window.location.href=\'login.html\'" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px;">Giriş Yap</button>';
+                } else if (error.message.includes('500') || error.message.includes('Internal Server Error')) {
+                    errorMessage = 'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.';
+                    errorDetails = '<button onclick="loadPortfolio()" style="background: #4fc3f7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px;">Tekrar Dene</button>';
+                } else if (error.message.includes('missing_table')) {
+                    errorMessage = 'Veritabanı tabloları eksik. Sistem yöneticisi ile iletişime geçin.';
+                    errorDetails = '<button onclick="setupDatabase()" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px;">Veritabanını Kur</button>';
+                } else if (error.message.includes('HTML instead of JSON')) {
+                    errorMessage = 'Sunucuda PHP hatası oluştu. Lütfen sistem yöneticisi ile iletişime geçin.';
+                    errorDetails = '<button onclick="loadPortfolio()" style="background: #4fc3f7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px;">Tekrar Dene</button>';
+                } else if (error.message.includes('JSON Parse Error')) {
+                    errorMessage = 'Sunucu yanıtı işlenirken hata oluştu.';
+                    errorDetails = '<button onclick="loadPortfolio()" style="background: #4fc3f7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px;">Tekrar Dene</button>';
+                } else if (error.message.includes('Empty response')) {
+                    errorMessage = 'Sunucudan boş yanıt alındı.';
+                    errorDetails = '<button onclick="loadPortfolio()" style="background: #4fc3f7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px;">Tekrar Dene</button>';
+                } else {
+                    errorDetails = '<button onclick="loadPortfolio()" style="background: #4fc3f7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px;">Tekrar Dene</button>';
+                }
+                
+                // Hata mesajını göster
+                const portfolioTableBody = document.getElementById('portfolioTableBody');
+                if (portfolioTableBody) {
+                    portfolioTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: #ef4444;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 12px;"></i><br>
+                                <strong>${errorMessage}</strong><br>
+                                <small style="color: #8896ab; margin-top: 8px; display: block;">Teknik detay: ${technicalDetails}</small>
+                                ${errorDetails}
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                // Notification da göster
+                showNotification(errorMessage, 'error');
+            }
+        }
+        
+        // Global portfolio view state
+        let currentPortfolioView = 'cards';
+        
+        // Portföy görünüm değiştirme
+        function togglePortfolioView(view) {
+            currentPortfolioView = view;
+            const cardsContainer = document.getElementById('portfolioCards');
+            const tableContainer = document.getElementById('portfolioTable');
+            const cardViewBtn = document.getElementById('cardViewBtn');
+            const tableViewBtn = document.getElementById('tableViewBtn');
+            
+            if (view === 'cards') {
+                cardsContainer.style.display = 'grid';
+                tableContainer.style.display = 'none';
+                cardViewBtn.classList.add('active');
+                tableViewBtn.classList.remove('active');
+            } else {
+                cardsContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+                cardViewBtn.classList.remove('active');
+                tableViewBtn.classList.add('active');
+            }
+        }
+        
+        // Portföy verilerini göster
+        function displayPortfolio(data) {
+            const loader = document.getElementById('portfolioLoader');
+            const cardsContainer = document.getElementById('portfolioCards');
+            const tableContainer = document.getElementById('portfolioTable');
+            const tbody = document.getElementById('portfolioTableBody');
+            
+            // Loading'i gizle
+            loader.style.display = 'none';
+            
+            // Özet bilgilerini güncelle
+            const summary = data.summary;
+            updatePortfolioSummary(summary, data.portfolio);
+            
+            // Kart görünümü oluştur
+            displayPortfolioCards(data.portfolio, cardsContainer);
+            
+            // Tablo görünümü oluştur
+            displayPortfolioTable(data.portfolio, tbody);
+            
+            // Aktif görünümü göster
+            togglePortfolioView(currentPortfolioView);
+            
+            // Başarı mesajı göster
+            if (typeof showNotification === 'function') {
+                showNotification(`Portföy yüklendi: ${summary.coin_count} farklı varlık`, 'success');
+            }
+        }
+        
+        // Portföy özet kartlarını güncelle
+        function updatePortfolioSummary(summary, portfolio = []) {
+            // Güvenli element güncellemeleri
+            const totalValueEl = document.getElementById('portfolioTotalValue');
+            const profitLossEl = document.getElementById('portfolioProfitLoss');
+            const profitPercentElement = document.getElementById('profitLossPercent');
+            const totalValueTrend = document.getElementById('totalValueTrend');
+            const profitLossTrend = document.getElementById('profitLossTrend');
+            const coinCountEl = document.getElementById('portfolioCoinCount');
+            
+            // Güvenli değer kontrolü ile güncelleme
+            if (totalValueEl && summary && typeof summary.total_value !== 'undefined') {
+                totalValueEl.textContent = `₺${summary.total_value.toLocaleString('tr-TR', {minimumFractionDigits: 2})}`;
+            }
+            
+            if (profitLossEl && summary && typeof summary.total_profit_loss !== 'undefined') {
+                profitLossEl.textContent = `₺${summary.total_profit_loss.toLocaleString('tr-TR', {minimumFractionDigits: 2})}`;
+                
+                // Kar/Zarar rengini ayarla
+                const isProfit = summary.total_profit_loss >= 0;
+                const color = isProfit ? '#10b981' : '#ef4444';
+                const icon = isProfit ? 'fa-arrow-up' : 'fa-arrow-down';
+                
+                profitLossEl.style.color = color;
+                
+                if (profitPercentElement && typeof summary.total_profit_loss_percent !== 'undefined') {
+                    profitPercentElement.textContent = `${isProfit ? '+' : ''}${summary.total_profit_loss_percent.toFixed(2)}%`;
+                    profitPercentElement.style.color = color;
+                }
+                
+                // Trend ikonlarını güncelle
+                if (totalValueTrend) {
+                    totalValueTrend.className = `fas ${icon}`;
+                    totalValueTrend.style.color = color;
+                }
+                if (profitLossTrend) {
+                    profitLossTrend.className = `fas ${icon}`;
+                    profitLossTrend.style.color = color;
+                }
+            }
+            
+            // Coin count
+            if (coinCountEl && summary && typeof summary.coin_count !== 'undefined') {
+                coinCountEl.textContent = summary.coin_count;
+            }
+            
+            // En iyi performans - Güvenli array kontrolü
+            if (portfolio && Array.isArray(portfolio) && portfolio.length > 0) {
+                const bestPerformer = portfolio.reduce((best, current) => 
+                    current.profit_loss_percent > best.profit_loss_percent ? current : best
+                );
+                
+                const bestPerformerValue = document.getElementById('bestPerformerValue');
+                const bestPerformerChange = document.getElementById('bestPerformerChange');
+                
+                if (bestPerformerValue && bestPerformerChange) {
+                    bestPerformerValue.textContent = bestPerformer.coin_kodu;
+                    bestPerformerChange.textContent = `+${bestPerformer.profit_loss_percent.toFixed(2)}%`;
+                    bestPerformerChange.style.color = bestPerformer.profit_loss_percent >= 0 ? '#10b981' : '#ef4444';
+                }
+            }
+        }
+        
+        // Portföy kartlarını göster (Enhanced with real-time features)
+        function displayPortfolioCardsWithRealTime(portfolio, container) {
+            container.innerHTML = '';
+            
+            portfolio.forEach(item => {
+                const profitLossColor = item.profit_loss >= 0 ? '#10b981' : '#ef4444';
+                const trendClass = item.profit_loss >= 0 ? 'positive' : 'negative';
+                const trendIcon = item.profit_loss >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+                const logoUrl = item.logo_url || `https://via.placeholder.com/40/4fc3f7/ffffff?text=${item.coin_kodu.charAt(0)}`;
+                
+                const card = document.createElement('div');
+                card.className = 'portfolio-asset-card';
+                card.setAttribute('data-coin-id', item.coin_id);
+                card.innerHTML = `
+                    <div class="asset-card-header">
+                        <div class="asset-info">
+                            <img src="${logoUrl}" alt="${item.coin_adi}" class="asset-logo"
+                                 onerror="this.src='https://via.placeholder.com/40/4fc3f7/ffffff?text=${item.coin_kodu.charAt(0)}'">
+                            <div class="asset-details">
+                                <h4 onclick="navigateToMarkets('${item.coin_kodu}')" style="cursor: pointer; color: #4fc3f7;" title="Piyasalarda ${item.coin_kodu} görüntüle">${item.coin_adi}</h4>
+                                <p>${item.coin_kodu}</p>
+                            </div>
+                        </div>
+                        <div class="asset-trend ${trendClass}">
+                            <i class="fas ${trendIcon}"></i>
+                            ${item.profit_loss_percent >= 0 ? '+' : ''}${parseFloat(item.profit_loss_percent).toFixed(2)}%
+                        </div>
+                    </div>
+                    
+                    <div class="asset-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Miktar</div>
+                            <div class="metric-value">${parseFloat(item.net_miktar).toFixed(6)}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Değer</div>
+                            <div class="metric-value">₺${parseFloat(item.current_value).toLocaleString('tr-TR', {minimumFractionDigits: 2})}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Ort. Fiyat</div>
+                            <div class="metric-value">₺${parseFloat(item.avg_buy_price).toLocaleString('tr-TR', {minimumFractionDigits: 2})}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">K/Z</div>
+                            <div class="metric-value" style="color: ${profitLossColor};">
+                                ${item.profit_loss >= 0 ? '+' : ''}₺${parseFloat(item.profit_loss).toLocaleString('tr-TR', {minimumFractionDigits: 2})}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="asset-actions">
+                        <button class="asset-action-btn sell ${item.profit_loss >= 0 ? 'profit-sell' : 'loss-sell'}" onclick="portfolioSellAsset('${item.coin_id}', '${item.coin_adi}', '${item.coin_kodu}', ${item.net_miktar})"
+                                title="${item.coin_kodu} sat (Mevcut: ${parseFloat(item.net_miktar).toFixed(6)}) - ${item.profit_loss >= 0 ? 'Kar' : 'Zarar'}: ${item.profit_loss >= 0 ? '+' : ''}₺${parseFloat(item.profit_loss).toLocaleString('tr-TR', {minimumFractionDigits: 2})}">
+                            <i class="fas fa-minus"></i> Sat
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        

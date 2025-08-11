@@ -1,0 +1,2946 @@
+
+  
+          // Timeframe değiştir
+          function updateChartTimeframe(timeframe) {
+              if (!chartData.isAnimating && chartData.priceData.length > 0) {
+                  // Farklı timeframe'ler için farklı data pattern'leri
+                  const patterns = {
+                      '1m': { volatility: 0.01, trend: 0.02 },
+                      '5m': { volatility: 0.02, trend: 0.03 },
+                      '15m': { volatility: 0.03, trend: 0.04 },
+                      '1h': { volatility: 0.05, trend: 0.06 },
+                      '4h': { volatility: 0.08, trend: 0.08 },
+                      '1d': { volatility: 0.12, trend: 0.10 }
+                  };
+                  
+                  const pattern = patterns[timeframe] || patterns['1h'];
+                  
+                  // Yeni data generate et
+                  const dataPoints = 50;
+                  const newPriceData = [];
+                  
+                  for (let i = 0; i < dataPoints; i++) {
+                      const variation = (Math.random() - 0.5) * pattern.volatility;
+                      const trend = Math.sin((i / dataPoints) * Math.PI * 3) * pattern.trend;
+                      const noise = (Math.random() - 0.5) * (pattern.volatility * 0.3);
+                      const price = chartData.basePrice * (1 + variation + trend + noise);
+                      newPriceData.push(price);
+                  }
+                  
+                  chartData.priceData = newPriceData;
+                  
+                  // Grafiği smooth transition ile güncelle
+                  const canvas = document.getElementById('priceChart');
+                  const ctx = canvas.getContext('2d');
+                  const rect = canvas.getBoundingClientRect();
+                  
+                  // Kısa animasyonla güncelle
+                  let progress = 0;
+                  function updateTransition() {
+                      progress += 0.1;
+                      if (progress <= 1) {
+                          ctx.clearRect(0, 0, rect.width, rect.height);
+                          chartData.animationProgress = 1;
+                          drawAnimatedChart(ctx, rect);
+                          requestAnimationFrame(updateTransition);
+                      }
+                  }
+                  requestAnimationFrame(updateTransition);
+              }
+          }
+
+         // Filter fonksiyonları
+        function initializeMarketFilters() {
+            const filterChips = document.querySelectorAll('.filter-chip');
+            filterChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    // Aktif filter'ı değiştir
+                    filterChips.forEach(f => f.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter uygula (şimdilik demo)
+                    const filter = this.dataset.filter;
+                    console.log('Filter uygulandı:', filter);
+                    
+                    // Burada gerçek filtreleme mantığı olacak
+                    // fetchMarketData() çağrısı ile backend'e filter parametresi gönderilebilir
+                });
+            });
+        }
+        
+        // Search input için debounced arama
+        function initializeCoinSearch() {
+            const searchInput = document.getElementById('coinSearch');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    fetchMarketData();
+                }, 500); // 500ms debounce
+            });
+        }
+        
+        // Responsive listener
+        function initializeResponsiveListeners() {
+            let resizeTimeout;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    // Grid görünümlerini tekrar düzenle
+                    const desktopGrid = document.getElementById('desktopCoinsGrid');
+                    const mobileGrid = document.getElementById('mobileCoinsGrid');
+                    
+                    if (desktopGrid && mobileGrid) {
+                        if (window.innerWidth > 768) {
+                            desktopGrid.style.display = 'grid';
+                            mobileGrid.style.display = 'none';
+                        } else {
+                            desktopGrid.style.display = 'none';
+                            mobileGrid.style.display = 'grid';
+                        }
+                    }
+                }, 250);
+            });
+        }
+        
+        // Page init
+        function initializeMarketPage() {
+            initializeMarketFilters();
+            initializeCoinSearch();
+            initializeResponsiveListeners();
+            
+            // İlk veri yüklemesi
+            fetchMarketData();
+          }
+
+         // Sayfa yüklendiğinde piyasaları yükle
+        async function refreshMarketData() {
+            await fetchMarketData();
+        }
+
+        // Trading sistem değişkenleri
+        let selectedForexPair = null;
+        let currentTradeDirection = 'long';
+
+        // Trading sistemini başlat
+        function initTrading() {
+            loadForexPairs();
+            setupTradingEventListeners();
+        }
+
+        // Forex pair'leri yükle
+        async function loadForexPairs() {
+            const forexLoader = document.getElementById('forexLoader');
+            const forexPairsList = document.getElementById('forexPairsList');
+
+            try {
+                // Şimdilik mock data kullan - sonra backend endpoint eklenecek
+                const mockForexData = [
+                    { id: 1, symbol: 'EURUSD', display_name: 'EUR/USD', category: 'major', current_price: 1.08500, bid_price: 1.08480, ask_price: 1.08520, spread: 4.0, pip_value: 0.0001, max_leverage: 500 },
+                    { id: 2, symbol: 'GBPUSD', display_name: 'GBP/USD', category: 'major', current_price: 1.26800, bid_price: 1.26780, ask_price: 1.26820, spread: 4.0, pip_value: 0.0001, max_leverage: 500 },
+                    { id: 3, symbol: 'USDJPY', display_name: 'USD/JPY', category: 'major', current_price: 148.250, bid_price: 148.230, ask_price: 148.270, spread: 4.0, pip_value: 0.01, max_leverage: 500 },
+                    { id: 4, symbol: 'XAUUSD', display_name: 'Gold', category: 'commodities', current_price: 2685.50, bid_price: 2685.00, ask_price: 2686.00, spread: 10.0, pip_value: 0.01, max_leverage: 200 },
+                    { id: 5, symbol: 'US30', display_name: 'Dow Jones', category: 'indices', current_price: 42580.50, bid_price: 42578.0, ask_price: 42583.0, spread: 5.0, pip_value: 1.0, max_leverage: 100 }
+                ];
+
+                renderForexPairs(mockForexData);
+                forexLoader.style.display = 'none';
+                forexPairsList.style.display = 'block';
+
+            } catch (error) {
+                console.error('Forex pairs yükleme hatası:', error);
+                forexPairsList.innerHTML = '<p style="color: #ff4757; text-align: center; padding: 20px;">Forex verileri yüklenemedi</p>';
+                forexLoader.style.display = 'none';
+                forexPairsList.style.display = 'block';
+            }
+        }
+
+        // Forex pair'leri renderla
+        function renderForexPairs(pairs) {
+            const container = document.getElementById('forexPairsList');
+            container.innerHTML = '';
+
+            pairs.forEach(pair => {
+                const priceDirection = Math.random() > 0.5 ? 'up' : 'down';
+                const priceColor = priceDirection === 'up' ? '#00d4aa' : '#ff4757';
+                const priceIcon = priceDirection === 'up' ? '▲' : '▼';
+
+                const pairElement = document.createElement('div');
+                pairElement.className = 'forex-pair-item';
+                pairElement.dataset.pairId = pair.id;
+                pairElement.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="flex: 1;">
+                            <div class="pair-symbol">${pair.display_name}</div>
+                            <div class="pair-category">${pair.category} • Max Leverage 1:${pair.max_leverage}</div>
+                        </div>
+                        <div style="text-align: right; min-width: 120px;">
+                            <div class="pair-price ${priceDirection === 'up' ? 'price-up' : 'price-down'}">
+                                ${pair.current_price} ${priceIcon}
+                            </div>
+                            <div class="pair-spread">Spread ${pair.spread} pips</div>
+                        </div>
+                    </div>
+                `;
+
+                pairElement.addEventListener('click', () => selectForexPair(pair));
+                container.appendChild(pairElement);
+            });
+        }
+
+        // Forex pair seç
+        function selectForexPair(pair) {
+            selectedForexPair = pair;
+
+            // Seçili pair'i görsel olarak işaretle
+            document.querySelectorAll('.forex-pair-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.querySelector(`[data-pair-id="${pair.id}"]`).classList.add('selected');
+
+            // Trading form'unu aktif et
+            document.getElementById('tradingForm').style.display = 'block';
+            document.getElementById('noSelectionMessage').style.display = 'none';
+
+            // Pair bilgilerini güncelle
+            document.getElementById('selectedPairInfo').innerHTML = `
+                <strong>${pair.display_name}</strong> | Price: ${pair.current_price} | Spread: ${pair.spread} pips | Max Leverage: 1:${pair.max_leverage}
+            `;
+
+            // Kaldıraç seçeneklerini güncelle
+            updateLeverageOptions(pair.max_leverage);
+
+            // Hesaplamaları güncelle
+            updateTradeCalculations();
+        }
+
+        // Kaldıraç seçeneklerini güncelle
+        function updateLeverageOptions(maxLeverage) {
+            const leverageSelect = document.getElementById('leverageRatio');
+            leverageSelect.innerHTML = '';
+
+            const leverageOptions = [10, 50, 100, 200, 500].filter(lev => lev <= maxLeverage);
+            leverageOptions.forEach(leverage => {
+                const option = document.createElement('option');
+                option.value = leverage;
+                option.textContent = `1:${leverage}`;
+                if (leverage === 100 && leverage <= maxLeverage) option.selected = true;
+                leverageSelect.appendChild(option);
+            });
+        }
+
+        // Trade hesaplamalarını güncelle
+        function updateTradeCalculations() {
+            if (!selectedForexPair) return;
+
+            const lotSize = parseFloat(document.getElementById('lotSize').value);
+            const leverage = parseInt(document.getElementById('leverageRatio').value);
+
+            // Basit margin hesaplaması
+            const contractSize = 100000; // Standard lot size
+            const price = selectedForexPair.current_price;
+            const requiredMargin = (lotSize * contractSize * price) / leverage;
+
+            // Pip değeri hesaplama
+            const pipValue = lotSize * contractSize * selectedForexPair.pip_value;
+
+            // DOM'u güncelle
+            document.getElementById('requiredMargin').textContent = `$${requiredMargin.toFixed(2)}`;
+            document.getElementById('pipValue').textContent = `$${pipValue.toFixed(2)}`;
+            document.getElementById('spreadValue').textContent = `${selectedForexPair.spread} pips`;
+            document.getElementById('contractSize').textContent = `${(lotSize * contractSize).toLocaleString()}`;
+
+            // Trade butonunu aktif et
+            document.getElementById('openTradeBtn').disabled = false;
+        }
+
+        // Trading event listener'ları kurulum
+        function setupTradingEventListeners() {
+            // Direction buttons
+            document.getElementById('longBtn').addEventListener('click', function() {
+                setTradeDirection('long');
+            });
+            document.getElementById('shortBtn').addEventListener('click', function() {
+                setTradeDirection('short');
+            });
+
+            // Form değişiklikleri
+            ['lotSize', 'leverageRatio'].forEach(id => {
+                document.getElementById(id).addEventListener('change', updateTradeCalculations);
+            });
+
+            // Trade açma butonu
+            document.getElementById('openTradeBtn').addEventListener('click', openTrade);
+
+            // Kategori filtreleri
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Filter logic burada eklenecek
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        // Trade direction değiştir
+        function setTradeDirection(direction) {
+            currentTradeDirection = direction;
+            document.querySelectorAll('.trade-direction-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(direction + 'Btn').classList.add('active');
+        }
+
+        // Trade aç
+        async function openTrade() {
+            if (!selectedForexPair) {
+                alert('Lütfen bir forex pair seçin');
+                return;
+            }
+
+            const tradeData = {
+                pair_id: selectedForexPair.id,
+                trade_type: currentTradeDirection,
+                lot_size: parseFloat(document.getElementById('lotSize').value),
+                leverage_ratio: parseInt(document.getElementById('leverageRatio').value),
+                stop_loss: document.getElementById('stopLoss').value || null,
+                take_profit: document.getElementById('takeProfit').value || null
+            };
+
+            try {
+                // Şimdilik mock response - sonra gerçek backend endpoint eklenecek
+                console.log('Trade açılıyor:', tradeData);
+                
+                alert(`🚀 ${selectedForexPair.display_name} için ${currentTradeDirection.toUpperCase()} pozisyonu açıldı!\n\nLot: ${tradeData.lot_size}\nKaldıraç: 1:${tradeData.leverage_ratio}\n\nPozisyon yönetimi için backend entegrasyonu yakında...`);
+                
+                // Form'u resetle
+                resetTradingForm();
+                
+            } catch (error) {
+                console.error('Trade açma hatası:', error);
+                alert('Trade açılırken hata oluştu');
+            }
+        }
+
+        // Trading form'unu resetle
+        function resetTradingForm() {
+            document.getElementById('stopLoss').value = '';
+            document.getElementById('takeProfit').value = '';
+            updateTradeCalculations();
+        }
+
+        // Pozisyonları yenile
+        function refreshPositions() {
+            const positionsLoader = document.getElementById('positionsLoader');
+            const positionsList = document.getElementById('openPositionsList');
+            
+            positionsLoader.style.display = 'block';
+            positionsList.style.display = 'none';
+            
+            // Mock pozisyon verisi
+            setTimeout(() => {
+                positionsList.innerHTML = `
+                    <div style="text-align: center; color: #8b8fa3; padding: 30px;">
+                        <i class="fas fa-chart-line" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                        <p>Açık pozisyon bulunmuyor</p>
+                        <small>Forex pair seçerek trading başlayabilirsiniz</small>
+                    </div>
+                `;
+                positionsLoader.style.display = 'none';
+                positionsList.style.display = 'block';
+            }, 1000);
+        }
+        
+        // Sayfa yüklendiğinde initialization yap
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Trading Dashboard başlatılıyor...');
+            
+            // Market sayfası için özel initialization
+            if (document.getElementById('coinSearch')) {
+                initializeMarketPage();
+            }
+            
+            // Trading sistemi başlat
+            if (document.getElementById('forexPairsContainer')) {
+                initTrading();
+            }
+            
+            // Kullanıcı verilerini yükle
+            loadUserInfo();
+        });
+
+        // Kaldıraçlı İşlem Sistemi
+        let currentLeverageMode = 'spot';
+        let currentLeverage = 1;
+        let currentPositionType = 'long';
+        let currentCoinPrice = 0;
+        let currentCoinSymbol = 'BTC';
+
+        // Trading modal'ı başlat
+        function initTradingModal() {
+            // Mode tab event listeners
+            document.querySelectorAll('.mode-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    currentLeverageMode = this.dataset.mode;
+                    toggleLeverageSelection();
+                    updateTradingCalculations();
+                    
+                    // Execute button'ı güncelle
+                    setTradingDirection(window.currentTradingCoin?.direction || 'buy');
+                });
+            });
+
+            // Leverage button event listeners
+            document.querySelectorAll('.leverage-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.leverage-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    currentLeverage = parseFloat(this.dataset.leverage);
+                    updateTradingCalculations();
+                });
+            });
+
+            // Position type event listeners
+            document.querySelectorAll('.position-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.position-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    currentPositionType = this.dataset.position;
+                    updateTradingCalculations();
+                    
+                    // Execute button metnini güncelle
+                    if (currentLeverageMode === 'leverage') {
+                        const executeText = document.getElementById('executeText');
+                        const positionText = currentPositionType === 'long' ? 'Long Pozisyon Aç' : 'Short Pozisyon Aç';
+                        executeText.textContent = `${currentCoinSymbol} ${positionText}`;
+                        
+                        const executeBtn = document.getElementById('executeOrderBtn');
+                        executeBtn.className = `execute-btn ${currentPositionType === 'long' ? 'buy-order' : 'sell-order'}`;
+                    }
+                });
+            });
+        }
+
+        // Kaldıraç seçimini göster/gizle
+        function toggleLeverageSelection() {
+            const leverageSelection = document.getElementById('leverageSelection');
+            const leverageSummaryRows = document.getElementById('leverageSummaryRows');
+            const executeBtn = document.getElementById('executeOrderBtn');
+            
+            if (currentLeverageMode === 'leverage') {
+                leverageSelection.style.display = 'block';
+                leverageSummaryRows.style.display = 'block';
+                
+                // Kaldıraç modunda execute button'ı aktif et
+                executeBtn.disabled = false;
+            } else {
+                leverageSelection.style.display = 'none';
+                leverageSummaryRows.style.display = 'none';
+            }
+        }
+
+        // Trading hesaplamalarını güncelle
+        function updateTradingCalculations() {
+            if (currentLeverageMode === 'leverage') {
+                updateLeverageCalculations();
+            }
+        }
+
+        // Kaldıraç hesaplamalarını güncelle (DÜZELTME: Doğru formüller)
+        function updateLeverageCalculations() {
+            const coinAmount = parseFloat(document.getElementById('coinAmount').value) || 0;
+            const totalAmount = parseFloat(document.getElementById('totalAmount').value) || 0;
+            const currentPrice = parseFloat(currentCoinPrice) || 0;
+
+            if (currentPrice > 0) {
+                let investedAmount = 0;
+                let positionSize = 0;
+
+                if (coinAmount > 0) {
+                    // Coin miktarından yatırım hesapla
+                    const totalPositionValue = coinAmount * currentPrice;
+                    investedAmount = totalPositionValue / currentLeverage;
+                    positionSize = coinAmount;
+                } else if (totalAmount > 0) {
+                    // Toplam tutardan pozisyon hesapla
+                    investedAmount = totalAmount;
+                    const totalPositionValue = totalAmount * currentLeverage;
+                    positionSize = totalPositionValue / currentPrice;
+                }
+
+                // Liquidation price hesapla (DÜZELTME: Doğru formül)
+                const liquidationPercentage = 0.8; // %80 zarar durumunda liquidation
+                const marginCallThreshold = liquidationPercentage / currentLeverage;
+                let liquidationPrice = 0;
+                
+                if (currentPositionType === 'long') {
+                    // Long: Fiyat düştüğünde liquidation
+                    liquidationPrice = currentPrice * (1 - marginCallThreshold);
+                } else {
+                    // Short: Fiyat yükseldiğinde liquidation
+                    liquidationPrice = currentPrice * (1 + marginCallThreshold);
+                }
+
+                // Potansiyel kar/zarar hesapla
+                const potentialPnL = calculatePotentialPnL(investedAmount, currentPrice, liquidationPrice);
+
+                // UI'yı güncelle
+                document.getElementById('leverageRatio').textContent = currentLeverage + 'x';
+                document.getElementById('positionSize').textContent = positionSize.toFixed(8) + ' ' + currentCoinSymbol;
+                document.getElementById('liquidationPrice').textContent = '₺' + liquidationPrice.toLocaleString('tr-TR', {minimumFractionDigits: 2});
+                document.getElementById('investedAmount').textContent = '₺' + investedAmount.toLocaleString('tr-TR', {minimumFractionDigits: 2});
+                
+                // Risk uyarısı ekle
+                const riskPercentage = (Math.abs(currentPrice - liquidationPrice) / currentPrice) * 100;
+                updateRiskIndicator(riskPercentage);
+            }
+        }
+        
+        // Potansiyel kar/zarar hesaplama fonksiyonu
+        function calculatePotentialPnL(investedAmount, entryPrice, targetPrice) {
+            const priceChangePercentage = (targetPrice - entryPrice) / entryPrice;
+            let pnl = 0;
+            
+            if (currentPositionType === 'long') {
+                pnl = priceChangePercentage * investedAmount * currentLeverage;
+            } else {
+                pnl = -priceChangePercentage * investedAmount * currentLeverage;
+            }
+            
+            return pnl;
+        }
+        
+        // Risk göstergesi güncelle
+        function updateRiskIndicator(riskPercentage) {
+            const riskElement = document.getElementById('riskIndicator');
+            if (!riskElement) return;
+            
+            let riskLevel = 'low';
+            let riskColor = '#10b981';
+            let riskText = 'Düşük Risk';
+            
+            if (riskPercentage < 5) {
+                riskLevel = 'high';
+                riskColor = '#ef4444';
+                riskText = 'Yüksek Risk - Liquidation Yakın!';
+            } else if (riskPercentage < 15) {
+                riskLevel = 'medium';
+                riskColor = '#f59e0b';
+                riskText = 'Orta Risk';
+            }
+            
+            riskElement.style.color = riskColor;
+            riskElement.textContent = `${riskText} (${riskPercentage.toFixed(1)}%)`;
+        }
+
+        // Pozisyonları yükle
+        async function loadPositions() {
+            try {
+                const response = await fetch('backend/user/leverage_trading.php?action=positions', {
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Pozisyonları global değişkende sakla
+                    window.currentPositions = data.positions;
+                    displayPositions(data.positions);
+                    updatePositionStats(data.positions);
+                } else {
+                    throw new Error(data.error || 'Pozisyonlar yüklenemedi');
+                }
+            } catch (error) {
+                console.error('Pozisyon yükleme hatası:', error);
+                document.getElementById('positionsTable').innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Pozisyonlar yüklenirken hata oluştu</span>
+                        <br>
+                        <small>Hata: ${error.message}</small>
+                    </div>
+                `;
+            }
+        }
+
+        // Pozisyonları görüntüle - DÜZELTME: Kullanıcı dostu pozisyon kapatma
+        function displayPositions(positions) {
+            const container = document.getElementById('positionsTable');
+            
+            if (positions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Henüz Pozisyon Yok</h3>
+                        <p>Kaldıraçlı işlem yapmak için piyasalar sayfasından coin seçip kaldıraçlı mod ile işlem yapabilirsiniz</p>
+                        <button class="btn-primary" onclick="showSection('markets')">
+                            <i class="fas fa-plus"></i>
+                            İlk Pozisyonu Aç
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let positionsHTML = `
+                <div class="modern-positions-container">
+            `;
+
+            positions.forEach(position => {
+                const pnlClass = position.unrealized_pnl >= 0 ? 'positive' : 'negative';
+                const pnlSign = position.unrealized_pnl >= 0 ? '+' : '';
+                const pnlPercentage = parseFloat(position.pnl_percentage || 0).toFixed(1);
+                const currentPrice = parseFloat(position.market_price || position.current_price);
+                const entryPrice = parseFloat(position.entry_price);
+                const priceChangePercent = ((currentPrice - entryPrice) / entryPrice * 100).toFixed(2);
+                const priceChangeClass = currentPrice >= entryPrice ? 'positive' : 'negative';
+                
+                // Risk seviyesi hesapla
+                const liquidationPrice = parseFloat(position.liquidation_price || 0);
+                let riskLevel = 'low';
+                let riskColor = '#10b981';
+                let riskText = 'Düşük Risk';
+                
+                if (liquidationPrice > 0) {
+                    const distanceToLiquidation = Math.abs(currentPrice - liquidationPrice) / currentPrice * 100;
+                    if (distanceToLiquidation < 5) {
+                        riskLevel = 'critical';
+                        riskColor = '#ef4444';
+                        riskText = 'KRİTİK RİSK!';
+                    } else if (distanceToLiquidation < 15) {
+                        riskLevel = 'high';
+                        riskColor = '#f59e0b';
+                        riskText = 'Yüksek Risk';
+                    } else if (distanceToLiquidation < 30) {
+                        riskLevel = 'medium';
+                        riskColor = '#3b82f6';
+                        riskText = 'Orta Risk';
+                    }
+                }
+                
+                positionsHTML += `
+                    <div class="modern-position-card ${position.position_type} risk-${riskLevel}">
+                        <!-- Risk Uyarısı -->
+                        ${riskLevel === 'critical' ? `
+                        <div class="risk-warning critical">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>LIQUIDATION RİSKİ! Pozisyonu kapatmayı düşünün</span>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="position-main-info">
+                            <div class="coin-section">
+                                <div class="coin-icon">
+                                    <i class="fab fa-bitcoin"></i>
+                                </div>
+                                <div class="coin-details">
+                                    <h3 class="coin-name">${position.coin_symbol}</h3>
+                                    <div class="position-type ${position.position_type}">
+                                        <i class="fas fa-arrow-${position.position_type === 'long' ? 'up' : 'down'}"></i>
+                                        <span>${position.position_type === 'long' ? 'LONG' : 'SHORT'} ${position.leverage_ratio}x</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="pnl-section ${pnlClass}">
+                                <div class="pnl-amount">
+                                    ${pnlSign}₺${Math.abs(parseFloat(position.unrealized_pnl)).toLocaleString('tr-TR', {minimumFractionDigits: 0})}
+                                </div>
+                                <div class="pnl-percentage">
+                                    ${pnlSign}${pnlPercentage}%
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Fiyat Bilgileri -->
+                        <div class="price-info-section">
+                            <div class="price-row">
+                                <span class="price-label">Giriş Fiyatı:</span>
+                                <span class="price-value">₺${entryPrice.toLocaleString('tr-TR', {minimumFractionDigits: 0})}</span>
+                            </div>
+                            <div class="price-row">
+                                <span class="price-label">Güncel Fiyat:</span>
+                                <span class="price-value ${priceChangeClass}">
+                                    ₺${currentPrice.toLocaleString('tr-TR', {minimumFractionDigits: 0})}
+                                    <small>(${priceChangePercent >= 0 ? '+' : ''}${priceChangePercent}%)</small>
+                                </span>
+                            </div>
+                            ${liquidationPrice > 0 ? `
+                            <div class="price-row liquidation">
+                                <span class="price-label">Liquidation:</span>
+                                <span class="price-value" style="color: ${riskColor};">₺${liquidationPrice.toLocaleString('tr-TR', {minimumFractionDigits: 0})}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="position-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Yatırım</span>
+                                <span class="stat-value">₺${parseFloat(position.invested_amount).toLocaleString('tr-TR', {minimumFractionDigits: 0})}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Pozisyon Büyüklüğü</span>
+                                <span class="stat-value">${parseFloat(position.position_size || 0).toFixed(6)} ${position.coin_symbol}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Risk Seviyesi</span>
+                                <span class="stat-value" style="color: ${riskColor};">${riskText}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Açılış Zamanı</span>
+                                <span class="stat-value">${new Date(position.created_at).toLocaleDateString('tr-TR')}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="position-chart">
+                            <div class="mini-chart-container" id="miniChart_${position.id}_${position.coin_symbol}"></div>
+                        </div>
+                        
+                        <!-- Gelişmiş Pozisyon Kapatma Butonları -->
+                        <div class="position-actions-enhanced">
+                            <div class="action-buttons-row">
+                                <button class="btn-close-position quick-close" 
+                                        onclick="quickClosePosition(${position.id}, '${position.coin_symbol}', ${currentPrice}, 'market')"
+                                        title="Mevcut piyasa fiyatından hemen kapat">
+                                    <i class="fas fa-bolt"></i>
+                                    <span>Hızlı Kapat</span>
+                                    <small>Piyasa Fiyatı</small>
+                                </button>
+                                
+                                <button class="btn-close-position advanced-close" 
+                                        onclick="openAdvancedCloseModal(${position.id}, '${position.coin_symbol}', ${currentPrice}, ${entryPrice}, ${position.leverage_ratio})"
+                                        title="Gelişmiş kapatma seçenekleri">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Gelişmiş Kapat</span>
+                                    <small>Limit/Stop</small>
+                                </button>
+                            </div>
+                            
+                            <!-- Hızlı Kar Al / Zarar Durdur -->
+                            <div class="quick-actions-row">
+                                <button class="btn-quick-action take-profit" 
+                                        onclick="setQuickTakeProfit(${position.id}, ${currentPrice}, ${position.position_type})"
+                                        title="Hızlı kar al emri">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>Kar Al</span>
+                                </button>
+                                
+                                <button class="btn-quick-action stop-loss" 
+                                        onclick="setQuickStopLoss(${position.id}, ${currentPrice}, ${position.position_type})"
+                                        title="Hızlı zarar durdur emri">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>Zarar Durdur</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            positionsHTML += `
+                </div>
+            `;
+
+            container.innerHTML = positionsHTML;
+
+            // Küçük candlestick grafiklerini oluştur
+            createMiniCandlestickCharts(positions);
+
+            // Candlestick coin listesini güncelle
+            updateCandlestickCoinList();
+        }
+
+        // Pozisyon istatistiklerini güncelle (DÜZELTME: Doğru hesaplamalar)
+        function updatePositionStats(positions) {
+            const totalPositions = positions.length;
+            const totalInvested = positions.reduce((sum, pos) => sum + parseFloat(pos.invested_amount), 0);
+            const totalUnrealizedPnL = positions.reduce((sum, pos) => sum + parseFloat(pos.unrealized_pnl), 0);
+            
+            // Toplam pozisyon değeri (yatırım + kar/zarar)
+            const totalPositionValue = totalInvested + totalUnrealizedPnL;
+            
+            // Kar/zarar yüzdesi
+            const pnlPercentage = totalInvested > 0 ? (totalUnrealizedPnL / totalInvested) * 100 : 0;
+
+            document.getElementById('totalPositions').textContent = totalPositions;
+            document.getElementById('totalInvested').textContent = '₺' + totalInvested.toLocaleString('tr-TR', {minimumFractionDigits: 2});
+            
+            const pnlElement = document.getElementById('totalUnrealizedPnL');
+            const pnlSign = totalUnrealizedPnL >= 0 ? '+' : '';
+            pnlElement.textContent = pnlSign + '₺' + Math.abs(totalUnrealizedPnL).toLocaleString('tr-TR', {minimumFractionDigits: 2});
+            pnlElement.className = 'stat-value ' + (totalUnrealizedPnL >= 0 ? 'positive' : 'negative');
+
+            // Kar/zarar yüzdesini güncelle
+            const pnlPercentageElement = document.getElementById('pnlPercentage');
+            if (pnlPercentageElement) {
+                pnlPercentageElement.textContent = `${pnlSign}${Math.abs(pnlPercentage).toFixed(2)}%`;
+                pnlPercentageElement.className = 'stat-change ' + (totalUnrealizedPnL >= 0 ? 'positive' : 'negative');
+            }
+
+            // En iyi pozisyonu bul
+            if (positions.length > 0) {
+                const bestPosition = positions.reduce((best, current) => {
+                    const currentPnL = parseFloat(current.unrealized_pnl);
+                    const bestPnL = parseFloat(best.unrealized_pnl);
+                    return currentPnL > bestPnL ? current : best;
+                });
+                
+                const bestPositionValueElement = document.getElementById('bestPositionValue');
+                const bestPositionChangeElement = document.getElementById('bestPositionChange');
+                
+                if (bestPositionValueElement && bestPositionChangeElement) {
+                    bestPositionValueElement.textContent = bestPosition.coin_symbol;
+                    const bestPnL = parseFloat(bestPosition.unrealized_pnl);
+                    const bestPnLPercentage = parseFloat(bestPosition.pnl_percentage || 0);
+                    bestPositionChangeElement.textContent = `${bestPnL >= 0 ? '+' : ''}₺${Math.abs(bestPnL).toLocaleString('tr-TR')} (${bestPnL >= 0 ? '+' : ''}${bestPnLPercentage.toFixed(1)}%)`;
+                    bestPositionChangeElement.style.color = bestPnL >= 0 ? '#10b981' : '#ef4444';
+                }
+            }
+
+            // Pozisyon sayısını nav menüsünde göster
+            const positionCount = document.getElementById('positionCount');
+            if (totalPositions > 0) {
+                positionCount.textContent = totalPositions;
+                positionCount.style.display = 'flex';
+            } else {
+                positionCount.style.display = 'none';
+            }
+        }
+
+        // Pozisyon kapat
+        async function closePosition(positionId, coinSymbol, currentPrice) {
+            if (!confirm(`${coinSymbol} pozisyonunu kapatmak istediğinizden emin misiniz?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('backend/user/leverage_trading.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        action: 'close_position',
+                        position_id: positionId,
+                        close_price: currentPrice
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(`Pozisyon başarıyla kapatıldı! K/Z: ₺${parseFloat(data.pnl).toLocaleString('tr-TR', {minimumFractionDigits: 2})}`, 'success');
+                    loadPositions(); // Pozisyonları yenile
+                    loadUserInfo(); // Bakiyeyi güncelle
+                } else {
+                    throw new Error(data.error || 'Pozisyon kapatılamadı');
+                }
+            } catch (error) {
+                console.error('Pozisyon kapatma hatası:', error);
+                showNotification('Pozisyon kapatılırken hata oluştu', 'error');
+            }
+        }
+
+        // Hızlı pozisyon kapatma
+        async function quickClosePosition(positionId, coinSymbol, currentPrice, orderType = 'market') {
+            console.log(`🚀 Quick close position: ${positionId} - ${coinSymbol} at ${currentPrice}`);
+            
+            // Onay dialogu
+            const confirmMessage = `${coinSymbol} pozisyonunu ${orderType === 'market' ? 'piyasa fiyatından' : 'limit fiyatından'} hemen kapatmak istediğinizden emin misiniz?`;
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            try {
+                // Loading state göster
+                const button = event.target.closest('.btn-close-position');
+                if (button) {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kapatılıyor...';
+                    button.disabled = true;
+                }
+
+                const response = await fetch('backend/user/leverage_trading.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        action: 'close_position',
+                        position_id: positionId,
+                        close_price: currentPrice,
+                        order_type: orderType
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const pnl = parseFloat(data.pnl || 0);
+                    const pnlText = pnl >= 0 ? `+₺${pnl.toLocaleString('tr-TR')}` : `-₺${Math.abs(pnl).toLocaleString('tr-TR')}`;
+                    
+                    showNotification(`✅ ${coinSymbol} pozisyonu kapatıldı! K/Z: ${pnlText}`, 'success');
+                    
+                    // Pozisyonları ve bakiyeyi güncelle
+                    await Promise.all([
+                        loadPositions(),
+                        loadUserInfo()
+                    ]);
+                    
+                } else {
+                    throw new Error(data.error || 'Pozisyon kapatılamadı');
+                }
+            } catch (error) {
+                console.error('Hızlı pozisyon kapatma hatası:', error);
+                showNotification(`❌ Pozisyon kapatılırken hata: ${error.message}`, 'error');
+                
+                // Button'ı eski haline getir
+                if (button) {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }
+            }
+        }
+
+        // Gelişmiş pozisyon kapatma modalı
+        function openAdvancedCloseModal(positionId, coinSymbol, currentPrice, entryPrice, leverage) {
+            console.log(`🔧 Opening advanced close modal for position ${positionId}`);
+            
+            // Modal HTML'i oluştur
+            const modalHTML = `
+                <div id="advancedCloseModal" class="trading-modal-enhanced" style="display: flex;">
+                    <div class="modal-overlay" onclick="closeAdvancedCloseModal()"></div>
+                    <div class="modal-container-enhanced" style="max-width: 500px;">
+                        <div class="modal-header-enhanced">
+                            <div class="coin-info">
+                                <div class="coin-icon-container">
+                                    <i class="fab fa-bitcoin"></i>
+                                </div>
+                                <div class="coin-details">
+                                    <h2>${coinSymbol} Pozisyonu Kapat</h2>
+                                    <span>Gelişmiş Kapatma Seçenekleri</span>
+                                </div>
+                            </div>
+                            <button class="close-btn" onclick="closeAdvancedCloseModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="modal-body-enhanced">
+                            <!-- Pozisyon Bilgileri -->
+                            <div class="position-info-summary">
+                                <div class="info-row">
+                                    <span>Giriş Fiyatı:</span>
+                                    <span>₺${parseFloat(entryPrice).toLocaleString('tr-TR')}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Güncel Fiyat:</span>
+                                    <span>₺${parseFloat(currentPrice).toLocaleString('tr-TR')}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Kaldıraç:</span>
+                                    <span>${leverage}x</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Kapatma Seçenekleri -->
+                            <div class="close-options">
+                                <h4>Kapatma Türü Seçin:</h4>
+                                
+                                <div class="close-option-buttons">
+                                    <button class="close-option-btn market-close active" data-type="market">
+                                        <i class="fas fa-bolt"></i>
+                                        <span>Piyasa Emri</span>
+                                        <small>Anında kapat</small>
+                                    </button>
+                                    
+                                    <button class="close-option-btn limit-close" data-type="limit">
+                                        <i class="fas fa-target"></i>
+                                        <span>Limit Emri</span>
+                                        <small>Belirli fiyatta kapat</small>
+                                    </button>
+                                </div>
+                                
+                                <!-- Limit Fiyat Input -->
+                                <div id="limitPriceSection" style="display: none;">
+                                    <label>Limit Fiyatı (₺):</label>
+                                    <input type="number" id="limitPrice" placeholder="${currentPrice}" step="0.01" min="0">
+                                </div>
+                                
+                                <!-- Kısmi Kapatma -->
+                                <div class="partial-close-section">
+                                    <label>
+                                        <input type="checkbox" id="partialClose"> Kısmi Kapatma
+                                    </label>
+                                    <div id="partialCloseOptions" style="display: none;">
+                                        <label>Kapatılacak Yüzde (%):</label>
+                                        <div class="percentage-buttons">
+                                            <button class="percent-btn" data-percent="25">25%</button>
+                                            <button class="percent-btn" data-percent="50">50%</button>
+                                            <button class="percent-btn" data-percent="75">75%</button>
+                                        </div>
+                                        <input type="range" id="partialPercentage" min="1" max="100" value="50">
+                                        <span id="partialPercentageValue">50%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tahmini Sonuç -->
+                            <div class="estimated-result">
+                                <h4>Tahmini Sonuç:</h4>
+                                <div class="result-row">
+                                    <span>Tahmini K/Z:</span>
+                                    <span id="estimatedPnL">₺0</span>
+                                </div>
+                                <div class="result-row">
+                                    <span>Komisyon:</span>
+                                    <span id="estimatedFee">₺0</span>
+                                </div>
+                                <div class="result-row total">
+                                    <span>Net Tutar:</span>
+                                    <span id="netAmount">₺0</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Execute Button -->
+                            <button id="executeAdvancedClose" class="execute-btn">
+                                <i class="fas fa-check"></i>
+                                <span>Pozisyonu Kapat</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Modal'ı sayfaya ekle
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Event listener'ları kur
+            setupAdvancedCloseModalEvents(positionId, coinSymbol, currentPrice, entryPrice, leverage);
+        }
+
+        // Gelişmiş kapatma modal event'leri
+        function setupAdvancedCloseModalEvents(positionId, coinSymbol, currentPrice, entryPrice, leverage) {
+            // Close option buttons
+            document.querySelectorAll('.close-option-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.close-option-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const type = this.dataset.type;
+                    const limitSection = document.getElementById('limitPriceSection');
+                    
+                    if (type === 'limit') {
+                        limitSection.style.display = 'block';
+                    } else {
+                        limitSection.style.display = 'none';
+                    }
+                    
+                    updateEstimatedResult();
+                });
+            });
+            
+            // Partial close checkbox
+            document.getElementById('partialClose').addEventListener('change', function() {
+                const options = document.getElementById('partialCloseOptions');
+                options.style.display = this.checked ? 'block' : 'none';
+                updateEstimatedResult();
+            });
+            
+            // Percentage buttons
+            document.querySelectorAll('.percent-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const percent = parseInt(this.dataset.percent);
+                    document.getElementById('partialPercentage').value = percent;
+                    document.getElementById('partialPercentageValue').textContent = percent + '%';
+                    updateEstimatedResult();
+                });
+            });
+            
+            // Percentage slider
+            document.getElementById('partialPercentage').addEventListener('input', function() {
+                document.getElementById('partialPercentageValue').textContent = this.value + '%';
+                updateEstimatedResult();
+            });
+            
+            // Limit price input
+            document.getElementById('limitPrice').addEventListener('input', updateEstimatedResult);
+            
+            // Execute button
+            document.getElementById('executeAdvancedClose').addEventListener('click', function() {
+                executeAdvancedClose(positionId, coinSymbol, currentPrice, entryPrice, leverage);
+            });
+            
+            // Initial calculation
+            updateEstimatedResult();
+            
+            function updateEstimatedResult() {
+                // Bu fonksiyon tahmini sonuçları hesaplar
+                const isPartial = document.getElementById('partialClose').checked;
+                const percentage = isPartial ? parseInt(document.getElementById('partialPercentage').value) : 100;
+                const closeType = document.querySelector('.close-option-btn.active').dataset.type;
+                const limitPrice = closeType === 'limit' ? parseFloat(document.getElementById('limitPrice').value) || currentPrice : currentPrice;
+                
+                // Basit K/Z hesaplama
+                const priceChange = limitPrice - entryPrice;
+                const pnlPercentage = (priceChange / entryPrice) * leverage;
+                const estimatedPnL = 1000 * pnlPercentage * (percentage / 100); // Örnek yatırım tutarı
+                const fee = Math.abs(estimatedPnL) * 0.001; // %0.1 komisyon
+                const netAmount = estimatedPnL - fee;
+                
+                document.getElementById('estimatedPnL').textContent = `${estimatedPnL >= 0 ? '+' : ''}₺${Math.abs(estimatedPnL).toLocaleString('tr-TR')}`;
+                document.getElementById('estimatedPnL').style.color = estimatedPnL >= 0 ? '#10b981' : '#ef4444';
+                document.getElementById('estimatedFee').textContent = `₺${fee.toLocaleString('tr-TR')}`;
+                document.getElementById('netAmount').textContent = `${netAmount >= 0 ? '+' : ''}₺${Math.abs(netAmount).toLocaleString('tr-TR')}`;
+                document.getElementById('netAmount').style.color = netAmount >= 0 ? '#10b981' : '#ef4444';
+            }
+        }
+
+        // Gelişmiş kapatma işlemini gerçekleştir
+        async function executeAdvancedClose(positionId, coinSymbol, currentPrice, entryPrice, leverage) {
+            const closeType = document.querySelector('.close-option-btn.active').dataset.type;
+            const isPartial = document.getElementById('partialClose').checked;
+            const percentage = isPartial ? parseInt(document.getElementById('partialPercentage').value) : 100;
+            const limitPrice = closeType === 'limit' ? parseFloat(document.getElementById('limitPrice').value) : currentPrice;
+            
+            if (closeType === 'limit' && (!limitPrice || limitPrice <= 0)) {
+                showNotification('Geçerli bir limit fiyatı girin', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('backend/user/leverage_trading.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        action: 'close_position',
+                        position_id: positionId,
+                        close_type: closeType,
+                        close_price: limitPrice,
+                        partial_percentage: percentage
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const pnl = parseFloat(data.pnl || 0);
+                    const pnlText = pnl >= 0 ? `+₺${pnl.toLocaleString('tr-TR')}` : `-₺${Math.abs(pnl).toLocaleString('tr-TR')}`;
+                    
+                    showNotification(`✅ ${coinSymbol} pozisyonu ${closeType === 'limit' ? 'limit emri ile' : 'piyasa fiyatından'} kapatıldı! K/Z: ${pnlText}`, 'success');
+                    
+                    closeAdvancedCloseModal();
+                    
+                    // Pozisyonları ve bakiyeyi güncelle
+                    await Promise.all([
+                        loadPositions(),
+                        loadUserInfo()
+                    ]);
+                    
+                } else {
+                    throw new Error(data.error || 'Pozisyon kapatılamadı');
+                }
+            } catch (error) {
+                console.error('Gelişmiş pozisyon kapatma hatası:', error);
+                showNotification(`❌ Pozisyon kapatılırken hata: ${error.message}`, 'error');
+            }
+        }
+
+        // Gelişmiş kapatma modalını kapat
+        function closeAdvancedCloseModal() {
+            const modal = document.getElementById('advancedCloseModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Hızlı kar al emri
+        function setQuickTakeProfit(positionId, currentPrice, positionType) {
+            const profitPercentage = 10; // %10 kar hedefi
+            let targetPrice;
+            
+            if (positionType === 'long') {
+                targetPrice = currentPrice * 1.1; // %10 yukarı
+            } else {
+                targetPrice = currentPrice * 0.9; // %10 aşağı
+            }
+            
+            const confirmMessage = `${profitPercentage}% kar hedefi ile kar al emri oluşturulsun mu?\nHedef fiyat: ₺${targetPrice.toLocaleString('tr-TR')}`;
+            
+            if (confirm(confirmMessage)) {
+                createTakeProfitOrder(positionId, targetPrice);
+            }
+        }
+
+        // Hızlı zarar durdur emri
+        function setQuickStopLoss(positionId, currentPrice, positionType) {
+            const stopPercentage = 5; // %5 zarar durdur
+            let stopPrice;
+            
+            if (positionType === 'long') {
+                stopPrice = currentPrice * 0.95; // %5 aşağı
+            } else {
+                stopPrice = currentPrice * 1.05; // %5 yukarı
+            }
+            
+            const confirmMessage = `${stopPercentage}% zarar durdur emri oluşturulsun mu?\nStop fiyat: ₺${stopPrice.toLocaleString('tr-TR')}`;
+            
+            if (confirm(confirmMessage)) {
+                createStopLossOrder(positionId, stopPrice);
+            }
+        }
+
+        // Kar al emri oluştur
+        async function createTakeProfitOrder(positionId, targetPrice) {
+            try {
+                const response = await fetch('backend/user/leverage_trading.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        action: 'create_take_profit',
+                        position_id: positionId,
+                        target_price: targetPrice
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(`✅ Kar al emri oluşturuldu! Hedef: ₺${targetPrice.toLocaleString('tr-TR')}`, 'success');
+                } else {
+                    throw new Error(data.error || 'Kar al emri oluşturulamadı');
+                }
+            } catch (error) {
+                console.error('Kar al emri hatası:', error);
+                showNotification(`❌ Kar al emri oluşturulamadı: ${error.message}`, 'error');
+            }
+        }
+
+        // Zarar durdur emri oluştur
+        async function createStopLossOrder(positionId, stopPrice) {
+            try {
+                const response = await fetch('backend/user/leverage_trading.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        action: 'create_stop_loss',
+                        position_id: positionId,
+                        stop_price: stopPrice
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(`✅ Zarar durdur emri oluşturuldu! Stop: ₺${stopPrice.toLocaleString('tr-TR')}`, 'success');
+                } else {
+                    throw new Error(data.error || 'Zarar durdur emri oluşturulamadı');
+                }
+            } catch (error) {
+                console.error('Zarar durdur emri hatası:', error);
+                showNotification(`❌ Zarar durdur emri oluşturulamadı: ${error.message}`, 'error');
+            }
+        }
+
+        // Global positions view state
+        let currentPositionsView = 'cards';
+        
+        // Pozisyonlar görünüm değiştirme
+        function togglePositionsView(view) {
+            currentPositionsView = view;
+            const cardsContainer = document.getElementById('positionsCards');
+            const tableContainer = document.getElementById('positionsTable');
+            const cardViewBtn = document.getElementById('positionsCardViewBtn');
+            const tableViewBtn = document.getElementById('positionsTableViewBtn');
+            
+            if (view === 'cards') {
+                cardsContainer.style.display = 'grid';
+                tableContainer.style.display = 'none';
+                cardViewBtn.classList.add('active');
+                tableViewBtn.classList.remove('active');
+            } else {
+                cardsContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+                cardViewBtn.classList.remove('active');
+                tableViewBtn.classList.add('active');
+            }
+        }
+        
+        // Pozisyonları yenile
+        async function refreshPositions() {
+            const loader = document.getElementById('positionsLoader');
+            const cardsContainer = document.getElementById('positionsCards');
+            const tableContainer = document.getElementById('positionsTable');
+            const emptyState = document.getElementById('positionsEmpty');
+            
+            // Loading state göster
+            loader.style.display = 'block';
+            cardsContainer.style.display = 'none';
+            tableContainer.style.display = 'none';
+            emptyState.style.display = 'none';
+            
+            await loadPositions();
+        }
+
+        // Pozisyon geçmişi yükle
+        async function loadPositionHistory() {
+            const loader = document.getElementById('historyLoader');
+            const empty = document.getElementById('historyEmpty');
+            const items = document.getElementById('historyItems');
+            
+            // Loading state göster
+            loader.style.display = 'block';
+            empty.style.display = 'none';
+            items.innerHTML = '';
+            
+            try {
+                const response = await fetch('backend/user/leverage_trading.php?action=history', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                console.log('✅ Position History loaded:', result);
+                
+                if (result.success && result.data && result.data.length > 0) {
+                    displayPositionHistory(result.data);
+                } else {
+                    // Geçmiş boş - test verisi ekle
+                    const testHistory = [
+                        {
+                            id: 1,
+                            coin_symbol: 'BTC',
+                            position_type: 'long',
+                            leverage_ratio: 10,
+                            entry_price: 45000,
+                            close_price: 47000,
+                            invested_amount: 1000,
+                            realized_pnl: 444.44,
+                            pnl_percentage: 44.44,
+                            open_time: '2024-01-15 10:30:00',
+                            close_time: '2024-01-15 15:45:00'
+                        },
+                        {
+                            id: 2,
+                            coin_symbol: 'ETH',
+                            position_type: 'short',
+                            leverage_ratio: 5,
+                            entry_price: 2800,
+                            close_price: 2750,
+                            invested_amount: 500,
+                            realized_pnl: 89.29,
+                            pnl_percentage: 17.86,
+                            open_time: '2024-01-14 09:15:00',
+                            close_time: '2024-01-14 16:20:00'
+                        },
+                        {
+                            id: 3,
+                            coin_symbol: 'BTC',
+                            position_type: 'long',
+                            leverage_ratio: 20,
+                            entry_price: 46000,
+                            close_price: 44500,
+                            invested_amount: 800,
+                            realized_pnl: -652.17,
+                            pnl_percentage: -81.52,
+                            open_time: '2024-01-13 14:20:00',
+                            close_time: '2024-01-13 18:10:00'
+                        }
+                    ];
+                    displayPositionHistory(testHistory);
+                }
+                
+            } catch (error) {
+                console.error('Position history loading error:', error);
+                loader.style.display = 'none';
+                empty.style.display = 'block';
+            }
+        }
+        
+        // Pozisyon geçmişini göster
+        function displayPositionHistory(history) {
+            const loader = document.getElementById('historyLoader');
+            const empty = document.getElementById('historyEmpty');
+            const items = document.getElementById('historyItems');
+            
+            // Loading'i gizle
+            loader.style.display = 'none';
+            
+            if (!history || history.length === 0) {
+                empty.style.display = 'block';
+                return;
+            }
+            
+            // Özet istatistikleri hesapla
+            updateHistorySummary(history);
+            
+            // Geçmiş öğelerini oluştur
+            items.innerHTML = '';
+            
+            history.forEach(item => {
+                const pnlClass = parseFloat(item.realized_pnl) >= 0 ? 'profitable' : 'loss';
+                const pnlColor = parseFloat(item.realized_pnl) >= 0 ? 'positive' : 'negative';
+                const pnlSign = parseFloat(item.realized_pnl) >= 0 ? '+' : '';
+                
+                const historyItem = document.createElement('div');
+                historyItem.className = `history-item ${pnlClass}`;
+                historyItem.innerHTML = `
+                    <div class="history-item-header">
+                        <div class="history-item-left">
+                            <div class="history-coin-icon">
+                                ${item.coin_symbol.charAt(0)}
+                            </div>
+                            <div class="history-coin-details">
+                                <h5>${item.coin_symbol}</h5>
+                                <div class="history-position-type ${item.position_type}">
+                                    <i class="fas fa-arrow-${item.position_type === 'long' ? 'up' : 'down'}"></i>
+                                    ${item.position_type.toUpperCase()} ${item.leverage_ratio}x
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-item-right">
+                            <div class="history-pnl ${pnlColor}">
+                                ${pnlSign}₺${Math.abs(parseFloat(item.realized_pnl)).toLocaleString('tr-TR', {minimumFractionDigits: 2})}
+                            </div>
+                            <div class="history-date">
+                                ${new Date(item.close_time).toLocaleDateString('tr-TR')} 
+                                ${new Date(item.close_time).toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'})}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="history-item-details">
+                        <div class="history-detail">
+                            <div class="history-detail-label">Giriş Fiyat</div>
+                            <div class="history-detail-value">₺${parseFloat(item.entry_price).toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div class="history-detail">
+                            <div class="history-detail-label">Çıkış Fiyat</div>
+                            <div class="history-detail-value">₺${parseFloat(item.close_price).toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div class="history-detail">
+                            <div class="history-detail-label">Yatırım</div>
+                            <div class="history-detail-value">₺${parseFloat(item.invested_amount).toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div class="history-detail">
+                            <div class="history-detail-label">Süre</div>
+                            <div class="history-detail-value">${calculateDuration(item.open_time, item.close_time)}</div>
+                        </div>
+                        <div class="history-detail">
+                            <div class="history-detail-label">K/Z %</div>
+                            <div class="history-detail-value" style="color: ${parseFloat(item.realized_pnl) >= 0 ? '#10b981' : '#ef4444'}">
+                                ${pnlSign}${Math.abs(parseFloat(item.pnl_percentage)).toFixed(2)}%
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                items.appendChild(historyItem);
+            });
+            
+            // Filter butonları için event listener ekle
+            setupHistoryFilters(history);
+        }
+        
+        // Geçmiş özet istatistiklerini güncelle
+        function updateHistorySummary(history) {
+            const totalTrades = history.length;
+            const profitableTrades = history.filter(item => parseFloat(item.realized_pnl) >= 0).length;
+            const winRate = totalTrades > 0 ? (profitableTrades / totalTrades) * 100 : 0;
+            const totalPnL = history.reduce((sum, item) => sum + parseFloat(item.realized_pnl), 0);
+            const avgPnL = totalTrades > 0 ? totalPnL / totalTrades : 0;
+            
+            document.getElementById('totalTrades').textContent = totalTrades;
+            document.getElementById('winRate').textContent = `${winRate.toFixed(1)}%`;
+            
+            const totalPnLElement = document.getElementById('totalHistoryPnL');
+            totalPnLElement.textContent = `${totalPnL >= 0 ? '+' : ''}₺${Math.abs(totalPnL).toLocaleString('tr-TR', {minimumFractionDigits: 2})}`;
+            totalPnLElement.style.color = totalPnL >= 0 ? '#10b981' : '#ef4444';
+            
+            const avgPnLElement = document.getElementById('avgPnL');
+            avgPnLElement.textContent = `${avgPnL >= 0 ? '+' : ''}₺${Math.abs(avgPnL).toLocaleString('tr-TR', {minimumFractionDigits: 2})}`;
+            avgPnLElement.style.color = avgPnL >= 0 ? '#10b981' : '#ef4444';
+        }
+        
+        // Süre hesaplama fonksiyonu
+        function calculateDuration(openTime, closeTime) {
+            const start = new Date(openTime);
+            const end = new Date(closeTime);
+            const diffMs = end - start;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (diffHours > 0) {
+                return `${diffHours}s ${diffMinutes}d`;
+            } else {
+                return `${diffMinutes}d`;
+            }
+        }
+        
+        // Geçmiş filtreleme sistemi
+        function setupHistoryFilters(allHistory) {
+            const filterButtons = document.querySelectorAll('.history-filter-btn');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Aktif button güncelle
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Filtrelenmiş geçmişi göster
+                    const filter = button.dataset.filter;
+                    let filteredHistory = allHistory;
+                    
+                    if (filter === 'profitable') {
+                        filteredHistory = allHistory.filter(item => parseFloat(item.realized_pnl) >= 0);
+                    } else if (filter === 'loss') {
+                        filteredHistory = allHistory.filter(item => parseFloat(item.realized_pnl) < 0);
+                    }
+                    
+                    displayFilteredHistory(filteredHistory);
+                });
+            });
+        }
+        
+        // Filtrelenmiş geçmişi göster
+        function displayFilteredHistory(history) {
+            const items = document.getElementById('historyItems');
+            const empty = document.getElementById('historyEmpty');
+            
+            if (history.length === 0) {
+                items.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+            
+            empty.style.display = 'none';
+            items.innerHTML = '';
+            
+            history.forEach(item => {
+                const pnlClass = parseFloat(item.realized_pnl) >= 0 ? 'profitable' : 'loss';
+                const pnlColor = parseFloat(item.realized_pnl) >= 0 ? 'positive' : 'negative';
+                const pnlSign = parseFloat(item.realized_pnl) >= 0 ? '+' : '';
+                
+                const historyItem = document.createElement('div');
+                historyItem.className = `history-item ${pnlClass}`;
+                historyItem.innerHTML = `
+                    <div class="history-item-header">
+                        <div class="history-item-left">
+                            <div class="history-coin-icon">
+                                ${item.coin_symbol.charAt(0)}
+                            </div>
+                            <div class="history-coin-details">
+                                <h5>${item.coin_symbol}</h5>
+                                <div class="history-position-type ${item.position_type}">
+                                    <i class="fas fa-arrow-${item.position_type === 'long' ? 'up' : 'down'}"></i>
+                                    ${item.position_type.toUpperCase()} ${item.leverage_ratio}x
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-item-right">
+                            <div class="history-pnl ${pnlColor}">
+                                ${pnlSign}₺${Math.abs(parseFloat(item.realized_pnl)).toLocaleString('tr-TR', {minimumFractionDigits: 2})}
+                            </div>
+                            <div class="history-date">
+                                ${new Date(item.close_time).toLocaleDateString('tr-TR')} 
+                                ${new Date(item.close_time).toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'})}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="history-item-details">
+                        <div class="history-detail">
+                            <div class="history-detail-label">Giriş Fiyat</div>
+                            <div class="history-detail-value">₺${parseFloat(item.entry_price).toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div class="history-detail">
+                            <div class="history-detail-label">Çıkış Fiyat</div>
+                            <div class="history-detail-value">₺${parseFloat(item.close_price).toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div class="history-detail">
+                            <div class="history-detail-label">Yatırım</div>
+                            <div class="history-detail-value">₺${parseFloat(item.invested_amount).toLocaleString('tr-TR')}</div>
+                        </div>
+                        <div class="history-detail">
+                            <div class="history-detail-label">Süre</div>
+                            <div class="history-detail-value">${calculateDuration(item.open_time, item.close_time)}</div>
+                        </div>
+                        <div class="history-detail">
+                            <div class="history-detail-label">K/Z %</div>
+                            <div class="history-detail-value" style="color: ${parseFloat(item.realized_pnl) >= 0 ? '#10b981' : '#ef4444'}">
+                                ${pnlSign}${Math.abs(parseFloat(item.pnl_percentage)).toFixed(2)}%
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                items.appendChild(historyItem);
+            });
+        }
+        
+        // Real-time pozisyon fiyat güncellemesi
+        async function updatePositionPrices() {
+            try {
+                // Mevcut coin fiyatlarını al
+                const response = await fetch('backend/user/coins.php?action=all', {
+                    credentials: 'include'
+                });
+                const coinsData = await response.json();
+                
+                if (coinsData.success && coinsData.coins) {
+                    const prices = {};
+                    coinsData.coins.forEach(coin => {
+                        prices[coin.symbol] = coin.current_price;
+                    });
+                    
+                    // Backend'e fiyat güncellemesi gönder
+                    const updateResponse = await fetch('backend/user/leverage_trading.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            action: 'update_prices',
+                            prices: prices
+                        })
+                    });
+                    
+                    const updateData = await updateResponse.json();
+                    if (updateData.success) {
+                        // Pozisyonları yenile
+                        await loadPositions();
+                    }
+                }
+            } catch (error) {
+                console.error('Fiyat güncelleme hatası:', error);
+            }
+        }
+
+        // Otomatik fiyat güncellemesi (30 saniyede bir)
+        let priceUpdateInterval;
+        function startPriceUpdates() {
+            // Önceki interval'i temizle
+            if (priceUpdateInterval) {
+                clearInterval(priceUpdateInterval);
+            }
+            
+            // İlk güncellemeyi hemen yap
+            updatePositionPrices();
+            
+            // 30 saniyede bir güncelle
+            priceUpdateInterval = setInterval(updatePositionPrices, 30000);
+        }
+
+        function stopPriceUpdates() {
+            if (priceUpdateInterval) {
+                clearInterval(priceUpdateInterval);
+                priceUpdateInterval = null;
+            }
+        }
+
+        // Pozisyonların otomatik yenilenmesi için sayfa yüklendiğinde başlat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Eğer sayfa yüklendiğinde pozisyonlar sekmesi aktifse fiyat güncellemesini başlat
+            const activeSection = document.querySelector('.nav-link.active')?.dataset?.section;
+            if (activeSection === 'positions') {
+                startPriceUpdates();
+            }
+        });
+
+        // Kaldıraçlı işlem yap
+        async function executeLeverageOrder(orderData) {
+            console.log('🚀 ExecuteLeverageOrder çağrıldı:', orderData);
+            console.log('📊 Mevcut parametreler:', {
+                currentPositionType,
+                currentLeverage,
+                currentLeverageMode
+            });
+            
+            try {
+                const requestData = {
+                    action: 'open_position',
+                    coin_symbol: orderData.coin_symbol,
+                    position_type: currentPositionType,
+                    leverage_ratio: currentLeverage,
+                    invested_amount: orderData.invested_amount,
+                    entry_price: orderData.entry_price
+                };
+                
+                console.log('📤 API isteği gönderiliyor:', requestData);
+                
+                const response = await fetch('backend/user/leverage_trading.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include', // Session cookies için
+                    body: JSON.stringify(requestData)
+                });
+
+                console.log('📥 API yanıtı alındı:', response.status, response.statusText);
+                
+                // Response içeriğini önce text olarak alalım
+                const responseText = await response.text();
+                console.log('📄 Raw response:', responseText);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                    console.log('📋 API verisi:', data);
+                } catch (parseError) {
+                    console.error('❌ JSON Parse Error:', parseError);
+                    console.error('📄 Full Response content:', responseText);
+                    console.error('📏 Response length:', responseText.length);
+                    console.error('🔤 First 100 chars:', JSON.stringify(responseText.substring(0, 100)));
+                    console.error('🔤 Last 100 chars:', JSON.stringify(responseText.substring(responseText.length - 100)));
+                    throw new Error('Server response is not valid JSON');
+                }
+                
+                if (data.success) {
+                    showNotification(`Kaldıraçlı pozisyon açıldı! Pozisyon ID: ${data.position_id}`, 'success');
+                    closeTradingModal();
+                    loadUserInfo(); // Bakiyeyi güncelle
+                    loadPositions(); // Pozisyonları güncelle
+                } else {
+                    console.error('❌ API hatası:', data.error);
+                    throw new Error(data.error || 'Pozisyon açılamadı');
+                }
+            } catch (error) {
+                console.error('💥 Kaldıraçlı işlem hatası:', error);
+                showNotification(`Hata: ${error.message}`, 'error');
+            }
+        }
+
+        // Session kontrolü
+        async function checkAuthSession() {
+            try {
+                const response = await fetch('backend/public/profile.php', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.success && data.user) {
+                    console.log('🔐 Session aktif:', data.user.username);
+                    return true;
+                } else {
+                    console.warn('⚠️ Session bulunamadı - giriş yapın!');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Session kontrol hatası:', error);
+                return false;
+            }
+        }
+
+
+            
+
+
+        // Global test fonksiyonları
+        window.testLightweightCharts = testLightweightCharts;
+
+        // Pozisyonlardan coin listesini al ve candlestick dropdown'ını güncelle
+        function updateCandlestickCoinList() {
+            // Pozisyonlardan coin listesini al
+            const positions = window.currentPositions || [];
+            const coins = new Set();
+
+            positions.forEach(position => {
+                coins.add(position.coin_symbol);
+            });
+
+            console.log(`📊 Candlestick için ${coins.size} coin bulundu: ${Array.from(coins).join(', ')}`);
+        }
+
+        // Küçük candlestick grafikleri oluştur
+        function createMiniCandlestickCharts(positions) {
+            if (typeof LightweightCharts === 'undefined') {
+                console.log('⏳ LightweightCharts yükleniyor, mini grafikler için bekleniyor...');
+                setTimeout(() => createMiniCandlestickCharts(positions), 1000);
+                return;
+            }
+
+            // Her pozisyon için küçük grafik oluştur
+            positions.forEach(position => {
+                const chartContainer = document.getElementById(`miniChart_${position.id}_${position.coin_symbol}`);
+                if (!chartContainer) return;
+
+                try {
+                    // Mevcut grafik varsa kaldır
+                    if (chartContainer.chart) {
+                        chartContainer.chart.remove();
+                    }
+
+                    // Küçük grafik oluştur
+                    const chart = LightweightCharts.createChart(chartContainer, {
+                        width: 120,
+                        height: 60,
+                        layout: {
+                            background: { type: 'solid', color: 'transparent' },
+                            textColor: '#ffffff',
+                        },
+                        grid: {
+                            vertLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            horzLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                        },
+                        crosshair: {
+                            mode: LightweightCharts.CrosshairMode.Normal,
+                        },
+                        rightPriceScale: {
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            visible: false,
+                        },
+                        timeScale: {
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            visible: false,
+                        },
+                    });
+
+                    // Candlestick serisi ekle
+                    const candlestickSeries = chart.addCandlestickSeries({
+                        upColor: '#10b981',
+                        downColor: '#ef4444',
+                        borderVisible: false,
+                        wickUpColor: '#10b981',
+                        wickDownColor: '#ef4444',
+                    });
+
+                    // Mini grafik verisi oluştur (son 20 veri)
+                    const miniData = generateMiniCandlestickData(position.coin_symbol, 20);
+                    candlestickSeries.setData(miniData);
+
+                    // Grafik referansını sakla
+                    chartContainer.chart = chart;
+                    chartContainer.series = candlestickSeries;
+
+                    console.log(`✅ Mini candlestick grafiği oluşturuldu: ${position.coin_symbol}`);
+
+                } catch (error) {
+                    console.error(`❌ Mini grafik oluşturma hatası (${position.coin_symbol}):`, error);
+                }
+            });
+        }
+
+        // Mini candlestick verisi oluştur
+        function generateMiniCandlestickData(coinSymbol, count = 20) {
+            const data = [];
+            const basePrice = getBasePriceForCoin(coinSymbol);
+            const volatility = 0.02; // %2 volatilite
+
+            for (let i = 0; i < count; i++) {
+                const time = Math.floor(Date.now() / 1000) - (count - i) * 3600; // Her saat
+                const open = basePrice * (1 + (Math.random() - 0.5) * volatility);
+                const high = open * (1 + Math.random() * volatility);
+                const low = open * (1 - Math.random() * volatility);
+                const close = (open + high + low) / 3 + (Math.random() - 0.5) * volatility * basePrice;
+
+                data.push({
+                    time: time,
+                    open: open,
+                    high: high,
+                    low: low,
+                    close: close
+                });
+            }
+
+            return data;
+        }
+
+        // Coin için base price belirle
+        function getBasePriceForCoin(coinSymbol) {
+            const basePrices = {
+                'BTC': 1350000,
+                'ETH': 85000,
+                'BNB': 4500,
+                'ADA': 2.5,
+                'DOT': 45,
+                'LINK': 85,
+                'LTC': 1200,
+                'BCH': 8500,
+                'XRP': 3.2,
+                'DOGE': 0.15
+            };
+            return basePrices[coinSymbol] || 1000;
+        }
+
+        // Test fonksiyonu - LightweightCharts durumunu kontrol et
+        function testLightweightCharts() {
+            console.log('🔍 LightweightCharts durumu:');
+            console.log('- typeof LightweightCharts:', typeof LightweightCharts);
+            console.log('- LightweightCharts object:', LightweightCharts);
+            
+            if (typeof LightweightCharts !== 'undefined') {
+                console.log('✅ LightweightCharts yüklendi!');
+                console.log('- createChart method:', typeof LightweightCharts.createChart);
+            } else {
+                console.log('❌ LightweightCharts yüklenmedi!');
+            }
+        }
+
+        // Sayfa yüklendiğinde kaldıraç sistemini başlat
+        document.addEventListener('DOMContentLoaded', function() {
+            initTradingModal();
+            checkAuthSession();
+            
+            // Portföy-Piyasalar entegrasyonu için event listener'lar ekle
+            setupPortfolioIntegration();
+        });
+        
+        // Portföy ve piyasalar arasındaki entegrasyonu kur
+        function setupPortfolioIntegration() {
+            // Portfolio ekranı aktif olduğunda otomatik yenile
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    if (section === 'portfolio') {
+                        setTimeout(() => {
+                            loadPortfolio();
+                        }, 300);
+                    }
+                });
+            });
+        }
+        
+        // Check if portfolio screen is active
+        function isPortfolioScreenActive() {
+            const activeSection = document.querySelector('.content-section.active');
+            return activeSection && activeSection.id === 'portfolio';
+        }
+        
+        // Enhanced coin trade function with portfolio integration
+        async function executeCoinTrade(type, coinId, coinName, coinCode, amount, price) {
+            try {
+                const response = await fetch(`backend/user/trading.php?action=${type}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        coin_id: coinId,
+                        miktar: amount,
+                        fiyat: price
+                    })
+                });
+                
+                const result = await response.json();
+                console.log(`${type} işlem sonucu:`, result);
+                
+                if (result.success) {
+                    const actionText = type === 'buy' ? 'satın alındı' : 'satıldı';
+                    showNotification(`${amount} ${coinCode} başarıyla ${actionText}!`, 'success');
+                    
+                    // Close modal if exists
+                    if (typeof closeTradingModal === 'function') {
+                        closeTradingModal();
+                    }
+                    
+                    // Update balance
+                    loadUserInfo();
+                    
+                    // Update portfolio if on portfolio screen
+                    if (isPortfolioScreenActive()) {
+                        console.log('Portfolio ekranı aktif, güncelleniyor...');
+                        setTimeout(() => {
+                            loadPortfolio();
+                        }, 500);
+                    }
+                    
+                    // Update coin list
+                    setTimeout(() => {
+                        loadCoins();
+                    }, 300);
+                    
+                    return result;
+                } else {
+                    throw new Error(result.message || `${type} işlemi başarısız!`);
+                }
+            } catch (error) {
+                console.error(`${type} error:`, error);
+                showNotification(error.message || 'Bir hata oluştu!', 'error');
+                throw error;
+            }
+        }
+        
+        // Quick buy function for portfolio integration
+        async function quickBuyCoin(coinId, coinCode, currentPrice, amount = 0.001) {
+            return await executeCoinTrade('buy', coinId, coinCode, coinCode, amount, currentPrice);
+        }
+        
+        // Quick sell function for portfolio integration  
+        async function quickSellCoin(coinId, coinCode, currentPrice, amount) {
+            return await executeCoinTrade('sell', coinId, coinCode, coinCode, amount, currentPrice);
+        }
+        
+        // Auto-refresh portfolio when coins are bought/sold
+        function enablePortfolioAutoRefresh() {
+            // Portfolio ekranında 30 saniyede bir otomatik güncelle
+            let portfolioRefreshInterval;
+            
+            function startPortfolioRefresh() {
+                portfolioRefreshInterval = setInterval(() => {
+                    if (isPortfolioScreenActive()) {
+                        loadPortfolio();
+                    }
+                }, 30000); // 30 saniye
+            }
+            
+            function stopPortfolioRefresh() {
+                if (portfolioRefreshInterval) {
+                    clearInterval(portfolioRefreshInterval);
+                    portfolioRefreshInterval = null;
+                }
+            }
+            
+            // Sayfa görünürlüğü değiştiğinde refresh'i kontrol et
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    stopPortfolioRefresh();
+                } else if (isPortfolioScreenActive()) {
+                    startPortfolioRefresh();
+                }
+            });
+            
+            // İlk başlatma
+            if (isPortfolioScreenActive()) {
+                startPortfolioRefresh();
+            }
+        }
+        
+        // DÜZELTME: Portföy varlık satış fonksiyonu - Geliştirilmiş satış işlemi
+        async function portfolioSellAsset(coinId, coinName, coinCode, availableAmount) {
+            console.log(`🔄 ENHANCED Selling portfolio asset: ${coinCode}`, {coinId, availableAmount});
+            
+            // Miktar kontrolü - hassas floating point karşılaştırması
+            const sellAmount = parseFloat(availableAmount);
+            if (sellAmount <= 0.00000001) {
+                showNotification(`❌ Satış için yeterli ${coinCode} miktarı yok`, 'error');
+                return;
+            }
+            
+            // Gelişmiş onay dialogu
+            const confirmMessage = `${coinName} (${coinCode}) satış işlemi:\n\n` +
+                                 `• Satılacak Miktar: ${sellAmount.toFixed(8)} ${coinCode}\n` +
+                                 `• İşlem: Piyasa fiyatından anında satış\n\n` +
+                                 `Bu işlemi onaylıyor musunuz?`;
+            
+            if (!confirm(confirmMessage)) {
+                console.log('❌ Sell cancelled by user');
+                return;
+            }
+            
+            // Loading state göster
+            const sellButton = event?.target;
+            let originalButtonText = '';
+            if (sellButton) {
+                originalButtonText = sellButton.innerHTML;
+                sellButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Satılıyor...';
+                sellButton.disabled = true;
+            }
+            
+            try {
+                // DÜZELTME: Hassas miktar gönderimi
+                const formData = new FormData();
+                formData.append('coin_id', coinId);
+                formData.append('miktar', sellAmount.toFixed(8)); // 8 ondalık hassasiyet
+                formData.append('fiyat', 0); // 0 = Güncel piyasa fiyatını kullan
+                
+                console.log('📤 ENHANCED Sending sell request:', {
+                    coin_id: coinId,
+                    miktar: sellAmount.toFixed(8),
+                    fiyat: 0,
+                    coin_code: coinCode,
+                    available_amount: availableAmount,
+                    sell_amount_formatted: sellAmount.toFixed(8)
+                });
+                
+                const response = await fetch('backend/user/trading.php?action=sell', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                
+                console.log('📥 Response status:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+                }
+                
+                const responseText = await response.text();
+                console.log('📄 Raw response length:', responseText.length);
+                console.log('📄 Raw response preview:', responseText.substring(0, 200));
+                
+                // JSON parse kontrolü
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('❌ JSON Parse Error:', parseError);
+                    console.error('📄 Full response content:', responseText);
+                    
+                    // HTML response kontrolü
+                    if (responseText.includes('<html>') || responseText.includes('<!DOCTYPE')) {
+                        throw new Error('Server returned HTML instead of JSON (likely a PHP error)');
+                    }
+                    
+                    throw new Error(`Invalid JSON response: ${parseError.message}`);
+                }
+                
+                console.log('📈 ENHANCED Sell response:', result);
+                
+                if (result.success) {
+                    // Başarılı satış - detaylı bildirim
+                    const soldAmount = result.data?.miktar || sellAmount;
+                    const totalAmount = result.data?.net_tutar || result.data?.toplam_tutar || 0;
+                    const commission = result.data?.komisyon || 0;
+                    
+                    let successMessage = `✅ ${parseFloat(soldAmount).toFixed(6)} ${coinCode} başarıyla satıldı!`;
+                    
+                    if (totalAmount > 0) {
+                        successMessage += `\n💰 Net Tutar: ₺${parseFloat(totalAmount).toLocaleString('tr-TR', {minimumFractionDigits: 2})}`;
+                    }
+                    
+                    if (commission > 0) {
+                        successMessage += `\n📊 Komisyon: ₺${parseFloat(commission).toLocaleString('tr-TR', {minimumFractionDigits: 2})}`;
+                    }
+                    
+                    showNotification(successMessage, 'success');
+                    
+                    // Kullanıcı bilgilerini güncelle
+                    loadUserInfo();
+                    
+                    // Portföyü yeniden yükle
+                    setTimeout(() => {
+                        loadPortfolio();
+                    }, 500);
+                    
+                } else {
+                    // Hata durumu - detaylı hata mesajı
+                    const errorMessage = result.message || 'Bilinmeyen satış hatası';
+                    console.error('❌ Sell failed:', errorMessage);
+                    
+                    // Hata türüne göre özel mesajlar
+                    let userMessage = `❌ Satış Hatası: ${errorMessage}`;
+                    
+                    if (errorMessage.includes('Yetersiz coin miktarı')) {
+                        userMessage = `❌ Yetersiz ${coinCode} miktarı. Portföyünüzü kontrol edin.`;
+                    } else if (errorMessage.includes('Coin bulunamadı')) {
+                        userMessage = `❌ ${coinCode} coin'i bulunamadı veya aktif değil.`;
+                    } else if (errorMessage.includes('Geçersiz fiyat')) {
+                        userMessage = `❌ Fiyat bilgisi alınamadı. Lütfen tekrar deneyin.`;
+                    }
+                    
+                    showNotification(userMessage, 'error');
+                    
+                    // Debug bilgisi göster (geliştirme modunda)
+                    if (result.debug) {
+                        console.error('🔍 Debug info:', result.debug);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('❌ Enhanced sell error:', error);
+                
+                // Hata türüne göre kullanıcı dostu mesajlar
+                let errorMessage = 'Satış işlemi sırasında hata oluştu';
+                
+                if (error.message.includes('Network')) {
+                    errorMessage = 'Bağlantı hatası. İnternet bağlantınızı kontrol edin.';
+                } else if (error.message.includes('HTML instead of JSON')) {
+                    errorMessage = 'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.';
+                } else if (error.message.includes('HTTP Error: 500')) {
+                    errorMessage = 'Sunucu iç hatası. Lütfen sistem yöneticisi ile iletişime geçin.';
+                } else if (error.message.includes('HTTP Error: 401')) {
+                    errorMessage = 'Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.';
+                } else {
+                    errorMessage = `Hata: ${error.message}`;
+                }
+                
+                showNotification(`❌ ${errorMessage}`, 'error');
+                
+            } finally {
+                // Loading state'i kaldır
+                if (sellButton && originalButtonText) {
+                    sellButton.innerHTML = originalButtonText;
+                    sellButton.disabled = false;
+                }
+            }
+        }
+
+        // Navigate from portfolio to markets and highlight specific coin
+        function navigateToMarkets(coinCode) {
+            console.log(`🔄 Navigating to markets for ${coinCode}`);
+            
+            // Switch to markets section
+            switchSection('markets');
+            
+            // Wait for the markets section to load, then highlight the coin
+            setTimeout(() => {
+                highlightCoinInMarkets(coinCode);
+            }, 500);
+        }
+        
+        // Highlight specific coin in markets
+        function highlightCoinInMarkets(coinCode) {
+            // Desktop coin cards
+            const desktopCards = document.querySelectorAll('.desktop-coin-card');
+            desktopCards.forEach(card => {
+                const coinSymbol = card.querySelector('.coin-symbol');
+                if (coinSymbol && coinSymbol.textContent === coinCode) {
+                    card.style.border = '2px solid #4fc3f7';
+                    card.style.transform = 'scale(1.02)';
+                    card.style.boxShadow = '0 8px 25px rgba(79, 195, 247, 0.4)';
+                    
+                    // Scroll to the card
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Remove highlight after 3 seconds
+                    setTimeout(() => {
+                        card.style.border = '';
+                        card.style.transform = '';
+                        card.style.boxShadow = '';
+                    }, 3000);
+                }
+            });
+            
+            // Mobile coin cards
+            const mobileCards = document.querySelectorAll('.mobile-coin-card');
+            mobileCards.forEach(card => {
+                const coinSymbol = card.querySelector('.coin-symbol');
+                if (coinSymbol && coinSymbol.textContent === coinCode) {
+                    card.style.border = '2px solid #4fc3f7';
+                    card.style.boxShadow = '0 8px 25px rgba(79, 195, 247, 0.4)';
+                    
+                    // Scroll to the card
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Remove highlight after 3 seconds
+                    setTimeout(() => {
+                        card.style.border = '';
+                        card.style.boxShadow = '';
+                    }, 3000);
+                }
+            });
+        }
+        
+        
+        // Database setup function for missing tables
+        async function setupDatabase() {
+            try {
+                showNotification('Veritabanı kurulumu başlatılıyor...', 'info');
+                
+                const response = await fetch('backend/setup_database.php', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Veritabanı başarıyla kuruldu!', 'success');
+                    setTimeout(() => {
+                        loadPortfolio();
+                    }, 2000);
+                } else {
+                    throw new Error(result.message || 'Veritabanı kurulumu başarısız');
+                }
+            } catch (error) {
+                console.error('Database setup error:', error);
+                showNotification('Veritabanı kurulumu başarısız: ' + error.message, 'error');
+            }
+        }
+        
+        // Portfolio health check and recovery
+        async function checkPortfolioHealth() {
+            try {
+                const response = await fetch('backend/user/trading.php?action=health_check', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    console.warn('Portfolio health check failed:', result.message);
+                    return false;
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Portfolio health check error:', error);
+                return false;
+            }
+        }
+        
+        // Enhanced portfolio loading with retry mechanism
+        async function loadPortfolioWithRetry(maxRetries = 3) {
+            let retryCount = 0;
+            
+            while (retryCount < maxRetries) {
+                try {
+                    await loadPortfolio();
+                    return; // Success, exit the retry loop
+                } catch (error) {
+                    retryCount++;
+                    console.warn(`Portfolio load attempt ${retryCount} failed:`, error.message);
+                    
+                    if (retryCount < maxRetries) {
+                        // Wait before retry (exponential backoff)
+                        const waitTime = Math.pow(2, retryCount) * 1000; // 2s, 4s, 8s
+                        console.log(`Retrying in ${waitTime/1000} seconds...`);
+                        await new Promise(resolve => setTimeout(resolve, waitTime));
+                    } else {
+                        // Final attempt failed
+                        console.error('All portfolio load attempts failed');
+                        throw error;
+                    }
+                }
+            }
+        }
+        
+        // Initialize portfolio auto-refresh on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            enablePortfolioAutoRefresh();
+            enablePortfolioRealTimePrices();
+            addPortfolioQuickStats();
+            
+            // Initial health check
+            setTimeout(() => {
+                checkPortfolioHealth().then(isHealthy => {
+                    if (!isHealthy) {
+                        console.warn('Portfolio system health check failed');
+                    }
+                });
+            }, 1000);
+        });
+        
+        // Real-time portfolio price updates
+        function enablePortfolioRealTimePrices() {
+            let priceUpdateInterval;
+            
+            function updatePortfolioPrices() {
+                if (!isPortfolioScreenActive()) return;
+                
+                // Portfolio kartlarındaki fiyatları güncelle
+                const portfolioCards = document.querySelectorAll('.portfolio-asset-card');
+                portfolioCards.forEach(card => {
+                    const coinId = card.dataset.coinId;
+                    if (coinId) {
+                        updateSingleCoinPriceInPortfolio(coinId);
+                    }
+                });
+            }
+            
+            function startPortfolioPriceUpdates() {
+                // Her 15 saniyede bir fiyatları güncelle
+                priceUpdateInterval = setInterval(updatePortfolioPrices, 15000);
+            }
+            
+            function stopPortfolioPriceUpdates() {
+                if (priceUpdateInterval) {
+                    clearInterval(priceUpdateInterval);
+                    priceUpdateInterval = null;
+                }
+            }
+            
+            // Portfolio ekranı aktif olduğunda price updates başlat
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    if (section === 'portfolio') {
+                        setTimeout(startPortfolioPriceUpdates, 500);
+                    } else {
+                        stopPortfolioPriceUpdates();
+                    }
+                });
+            });
+        }
+        
+        // Update single coin price in portfolio
+        async function updateSingleCoinPriceInPortfolio(coinId) {
+            try {
+                const response = await fetch(`backend/user/coins.php?coin_id=${coinId}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                if (result.success && result.coin) {
+                    const coin = result.coin;
+                    updatePortfolioCoinDisplay(coinId, coin);
+                }
+            } catch (error) {
+                console.error('Coin fiyat güncelleme hatası:', error);
+            }
+        }
+        
+        // Update portfolio coin display with new price
+        function updatePortfolioCoinDisplay(coinId, coinData) {
+            const card = document.querySelector(`[data-coin-id="${coinId}"]`);
+            if (!card) return;
+            
+            const currentPriceElement = card.querySelector('.current-price');
+            const changeElement = card.querySelector('.price-change-indicator');
+            
+            if (currentPriceElement) {
+                const oldPrice = parseFloat(currentPriceElement.textContent.replace(/[₺,]/g, ''));
+                const newPrice = parseFloat(coinData.current_price);
+                
+                // Fiyat değişimi animasyonu
+                if (oldPrice !== newPrice) {
+                    currentPriceElement.style.background = newPrice > oldPrice ? '#10b981' : '#ef4444';
+                    currentPriceElement.style.transition = 'background 0.3s ease';
+                    
+                    setTimeout(() => {
+                        currentPriceElement.style.background = 'transparent';
+                    }, 1000);
+                }
+                
+                currentPriceElement.textContent = `₺${newPrice.toLocaleString('tr-TR', {minimumFractionDigits: 2})}`;
+            }
+            
+            if (changeElement && coinData.price_change_24h !== undefined) {
+                const change = parseFloat(coinData.price_change_24h);
+                changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+                changeElement.className = `price-change-indicator ${change >= 0 ? 'positive' : 'negative'}`;
+            }
+        }
+        
+        // Enhanced portfolio display with real-time indicators
+        function displayPortfolio(data) {
+            console.log('📊 Displaying portfolio with enhanced features:', data);
+            
+            const loader = document.getElementById('portfolioLoader');
+            const empty = document.getElementById('portfolioEmpty');
+            const cardsContainer = document.getElementById('portfolioCards');
+            const tableBody = document.getElementById('portfolioTableBody');
+            
+            // Loading'i gizle
+            if (loader) loader.style.display = 'none';
+            
+            if (!data.portfolio || !Array.isArray(data.portfolio) || data.portfolio.length === 0) {
+                if (empty) empty.style.display = 'block';
+                return;
+            }
+            
+            if (empty) empty.style.display = 'none';
+            
+            // Portfolio özetini güncelle
+            if (data.summary) {
+                updatePortfolioSummary(data.summary, data.portfolio);
+            }
+            
+            // Portfolio kartlarını göster (real-time özelliklerle)
+            if (cardsContainer) {
+                displayPortfolioCardsWithRealTime(data.portfolio, cardsContainer);
+            }
+            
+            // Portfolio tablosunu göster
+            if (tableBody) {
+                displayPortfolioTable(data.portfolio, tableBody);
+            }
+        }
+        
+        // Quick portfolio stats update function (eksik fonksiyon eklendi)
+        function updateQuickPortfolioStats(summary) {
+            // Bu fonksiyon portfolio hızlı istatistiklerini günceller
+            console.log('📈 Updating quick portfolio stats:', summary);
+            
+            // Gelecekte kullanılmak üzere placeholder
+            // Şimdilik sadece console log
+        }
+        
+        // Add portfolio quick stats function (eksik fonksiyon eklendi)
+        function addPortfolioQuickStats() {
+            console.log('📊 Adding portfolio quick stats functionality');
+            
+            // Portfolio hızlı istatistik özelliklerini ekler
+            // Bu fonksiyon portfolio sayfasında hızlı erişim widget'ları oluşturur
+            
+            // Şimdilik placeholder - gelecekte genişletilebilir
+        }
+
+        // Modern Profile Functions
+        function editProfileAvatar() {
+            showNotification('Avatar düzenleme özelliği yakında gelecek!', 'info');
+        }
+
+        function editProfileInfo() {
+            showNotification('Profil düzenleme özelliği yakında gelecek!', 'info');
+        }
+
+        function showWithdrawalComingSoon() {
+            showNotification('Para çekme özelliği yakında gelecek!', 'info');
+        }
+
+        // Modern Transaction History Loading
+        async function loadTransactionHistory() {
+            const historyContainer = document.getElementById('modernTransactionHistory');
+            
+            if (!historyContainer) {
+                console.warn('Modern transaction history container not found');
+                return;
+            }
+            
+            // Loading state göster
+            historyContainer.innerHTML = `
+                <div class="loading-state">
+                    <div class="modern-spinner"></div>
+                    <p>İşlem geçmişi yükleniyor...</p>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch('backend/user/transaction_history.php?action=list&limit=20', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                console.log('✅ Modern transaction history loaded:', result);
+                
+                if (result.success && result.data.transactions) {
+                    displayModernTransactionHistory(result.data.transactions);
+                } else {
+                    // Boş durum
+                    historyContainer.innerHTML = `
+                        <div style="text-align: center; padding: 60px 20px; color: #8b8fa3;">
+                            <i class="fas fa-history" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                            <h3 style="color: #ffffff; margin-bottom: 12px;">Henüz İşlem Yok</h3>
+                            <p>Henüz hiç işlem yapmamışsınız. İlk işleminizi yapmak için piyasalar sayfasını ziyaret edin.</p>
+                        </div>
+                    `;
+                }
+                
+                // İstatistikleri güncelle
+                if (result.data.stats) {
+                    updateModernProfileStats(result.data.stats);
+                }
+                
+            } catch (error) {
+                console.error('Modern transaction history loading error:', error);
+                historyContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #ef4444;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 12px;"></i><br>
+                        İşlem geçmişi yüklenirken hata oluştu.<br>
+                        <button onclick="loadTransactionHistory()" style="background: #4fc3f7; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 12px;">
+                            Tekrar Dene
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Global transaction pagination variables
+        let allTransactions = [];
+        let currentTransactionPage = 1;
+        const transactionsPerPage = 3;
+
+        // Modern Transaction History Display with Pagination
+        function displayModernTransactionHistory(transactions) {
+            const historyContainer = document.getElementById('modernTransactionHistory');
+            
+            if (!transactions || transactions.length === 0) {
+                historyContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: #8b8fa3;">
+                        <i class="fas fa-history" style="font-size: 32px; margin-bottom: 12px; opacity: 0.5;"></i>
+                        <h3 style="color: #ffffff; margin-bottom: 8px; font-size: 18px;">İşlem Geçmişi Boş</h3>
+                        <p style="font-size: 14px;">Henüz hiç işlem yapmamışsınız.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Store all transactions globally
+            allTransactions = transactions;
+            
+            // Calculate pagination
+            const totalPages = Math.ceil(transactions.length / transactionsPerPage);
+            const startIndex = (currentTransactionPage - 1) * transactionsPerPage;
+            const endIndex = startIndex + transactionsPerPage;
+            const currentTransactions = transactions.slice(startIndex, endIndex);
+            
+            let historyHTML = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            
+            currentTransactions.forEach(transaction => {
+                const isPositive = parseFloat(transaction.amount) > 0;
+                const amount = parseFloat(transaction.amount);
+                const formattedAmount = (isPositive ? '+' : '') + '₺' + Math.abs(amount).toLocaleString('tr-TR', { minimumFractionDigits: 2 });
+                
+                // İşlem tipine göre icon belirle
+                let icon = 'fas fa-exchange-alt';
+                let iconColor = '#4fc3f7';
+                
+                if (transaction.type === 'coin_trade') {
+                    icon = transaction.sub_type === 'al' ? 'fas fa-arrow-down' : 'fas fa-arrow-up';
+                    iconColor = transaction.sub_type === 'al' ? '#00d4aa' : '#ef4444';
+                } else if (transaction.type === 'deposit') {
+                    icon = 'fas fa-plus-circle';
+                    iconColor = '#00d4aa';
+                } else if (transaction.type === 'withdrawal') {
+                    icon = 'fas fa-minus-circle';
+                    iconColor = '#ef4444';
+                }
+                
+                // Status badge
+                let statusBadge = '';
+                if (transaction.sub_type === 'beklemede') {
+                    statusBadge = '<span style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; padding: 2px 6px; border-radius: 8px; font-size: 10px; font-weight: 600;">Beklemede</span>';
+                } else if (transaction.sub_type === 'onaylandi' || transaction.sub_type === 'al' || transaction.sub_type === 'sat') {
+                    statusBadge = '<span style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 2px 6px; border-radius: 8px; font-size: 10px; font-weight: 600;">Tamamlandı</span>';
+                } else if (transaction.sub_type === 'reddedildi') {
+                    statusBadge = '<span style="background: rgba(239, 68, 68, 0.2); color: #ef4444; padding: 2px 6px; border-radius: 8px; font-size: 10px; font-weight: 600;">Reddedildi</span>';
+                }
+                
+                historyHTML += `
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; transition: all 0.3s ease; backdrop-filter: blur(20px);">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 36px; height: 36px; background: rgba(${iconColor.substring(1, 3)}, ${iconColor.substring(3, 5)}, ${iconColor.substring(5, 7)}, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="${icon}" style="color: ${iconColor}; font-size: 14px;"></i>
+                                </div>
+                                <div style="min-width: 0; flex: 1;">
+                                    <div style="font-weight: 600; color: #ffffff; margin-bottom: 2px; font-size: 14px; line-height: 1.2;">
+                                        ${transaction.description}
+                                    </div>
+                                    <div style="font-size: 11px; color: #8b8fa3; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                        <span>${new Date(transaction.date).toLocaleDateString('tr-TR', { 
+                                            month: 'short', 
+                                            day: 'numeric', 
+                                            hour: '2-digit', 
+                                            minute: '2-digit' 
+                                        })}</span>
+                                        ${statusBadge}
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: right; flex-shrink: 0; margin-left: 8px;">
+                                <div style="font-weight: 700; font-size: 15px; color: ${isPositive ? '#00d4aa' : '#ef4444'}; margin-bottom: 2px;">
+                                    ${formattedAmount}
+                                </div>
+                                <div style="font-size: 10px; color: #8b8fa3;">
+                                    ${transaction.type === 'coin_trade' ? 'Coin' : transaction.type === 'deposit' ? 'Yatırım' : 'Çekim'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            historyHTML += '</div>';
+            
+            // Add pagination if there are more than 3 transactions
+            if (totalPages > 1) {
+                historyHTML += `
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; padding: 12px;">
+                        <button onclick="changeTransactionPage(${currentTransactionPage - 1})" 
+                                ${currentTransactionPage === 1 ? 'disabled' : ''} 
+                                style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; padding: 6px 10px; border-radius: 6px; cursor: ${currentTransactionPage === 1 ? 'not-allowed' : 'pointer'}; font-size: 12px; opacity: ${currentTransactionPage === 1 ? '0.5' : '1'};">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        
+                        <div style="display: flex; gap: 4px;">
+                `;
+                
+                // Page numbers
+                for (let i = 1; i <= totalPages; i++) {
+                    const isActive = i === currentTransactionPage;
+                    historyHTML += `
+                        <button onclick="changeTransactionPage(${i})" 
+                                style="background: ${isActive ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)' : 'rgba(255, 255, 255, 0.1)'}; 
+                                       border: 1px solid ${isActive ? '#3b82f6' : 'rgba(255, 255, 255, 0.2)'}; 
+                                       color: #ffffff; 
+                                       padding: 6px 10px; 
+                                       border-radius: 6px; 
+                                       cursor: pointer; 
+                                       font-size: 12px; 
+                                       font-weight: ${isActive ? '600' : '400'};
+                                       min-width: 28px;
+                                       transition: all 0.3s ease;">
+                            ${i}
+                        </button>
+                    `;
+                }
+                
+                historyHTML += `
+                        </div>
+                        
+                        <button onclick="changeTransactionPage(${currentTransactionPage + 1})" 
+                                ${currentTransactionPage === totalPages ? 'disabled' : ''} 
+                                style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; padding: 6px 10px; border-radius: 6px; cursor: ${currentTransactionPage === totalPages ? 'not-allowed' : 'pointer'}; font-size: 12px; opacity: ${currentTransactionPage === totalPages ? '0.5' : '1'};">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        
+                        <div style="margin-left: 12px; color: #8b8fa3; font-size: 11px;">
+                            ${startIndex + 1}-${Math.min(endIndex, transactions.length)} / ${transactions.length}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            historyContainer.innerHTML = historyHTML;
+        }
+
+        // Change transaction page function
+        function changeTransactionPage(page) {
+            const totalPages = Math.ceil(allTransactions.length / transactionsPerPage);
+            
+            if (page < 1 || page > totalPages) return;
+            
+            currentTransactionPage = page;
+            displayModernTransactionHistory(allTransactions);
+        }
+
+        // Modern Profile Stats Update
+        function updateModernProfileStats(stats) {
+            // Modern stats kartlarını güncelle
+            const modernTotalTrades = document.getElementById('modernTotalTrades');
+            const modernProfitLoss = document.getElementById('modernProfitLoss');
+            const modernPortfolioValue = document.getElementById('modernPortfolioValue');
+            const modernMemberSince = document.getElementById('modernMemberSince');
+
+            if (modernTotalTrades && stats.total_trades) {
+                modernTotalTrades.textContent = stats.total_trades;
+            }
+
+            if (modernProfitLoss) {
+                const profitLoss = (stats.total_sell_amount || 0) - (stats.total_buy_amount || 0);
+                modernProfitLoss.textContent = `₺${profitLoss.toLocaleString('tr-TR')}`;
+                modernProfitLoss.style.color = profitLoss >= 0 ? '#10b981' : '#ef4444';
+            }
+
+            if (modernPortfolioValue) {
+                // Portfolio değeri backend'den gelecek
+                modernPortfolioValue.textContent = '₺0';
+            }
+
+            if (modernMemberSince) {
+                // Üyelik süresi hesapla
+                const memberSince = stats.member_since || new Date();
+                const monthsDiff = Math.floor((new Date() - new Date(memberSince)) / (1000 * 60 * 60 * 24 * 30));
+                modernMemberSince.textContent = monthsDiff || 1;
+            }
+        }
+
+        // Modern User Info Display
+        function displayModernUserInfo(userInfo) {
+            const container = document.getElementById('modernUserInfo');
+            
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 0;">
+                    <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <h4 style="color: #ffffff; margin-bottom: 16px; font-size: 16px; font-weight: 600;">
+                            <i class="fas fa-user" style="color: #3b82f6; margin-right: 8px;"></i>
+                            Kişisel Bilgiler
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #8b8fa3; font-size: 14px;">Kullanıcı Adı:</span>
+                                <span style="color: #ffffff; font-weight: 600;">${userInfo.username || 'N/A'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #8b8fa3; font-size: 14px;">Email:</span>
+                                <span style="color: #ffffff; font-weight: 600;">${userInfo.email || 'N/A'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #8b8fa3; font-size: 14px;">Ad Soyad:</span>
+                                <span style="color: #ffffff; font-weight: 600;">${userInfo.ad_soyad || 'Belirtilmemiş'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <h4 style="color: #ffffff; margin-bottom: 16px; font-size: 16px; font-weight: 600;">
+                            <i class="fas fa-calendar" style="color: #10b981; margin-right: 8px;"></i>
+                            Hesap Durumu
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #8b8fa3; font-size: 14px;">Kayıt Tarihi:</span>
+                                <span style="color: #ffffff; font-weight: 600;">${userInfo.created_at ? new Date(userInfo.created_at).toLocaleDateString('tr-TR') : 'N/A'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #8b8fa3; font-size: 14px;">Son Giriş:</span>
+                                <span style="color: #ffffff; font-weight: 600;">${userInfo.son_giris ? new Date(userInfo.son_giris).toLocaleDateString('tr-TR') : 'İlk giriş'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #8b8fa3; font-size: 14px;">Hesap Tipi:</span>
+                                <span style="color: #10b981; font-weight: 600;">${userInfo.role === 'admin' ? 'Yönetici' : 'Premium Üye'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Enhanced loadUserInfo for modern profile
+        function loadUserInfo() {
+            fetch('backend/public/profile.php', {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(r => r.json())
+            .then(data => {
+                if(data.success) {
+                    console.log('✅ Kullanıcı bilgileri yüklendi:', data.user);
+                    
+                    // Bakiye göster
+                    const balance = parseFloat(data.user.balance) || 0;
+                    const balanceFormatted = balance.toLocaleString('tr-TR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    
+                    document.getElementById('userBalance').innerHTML = 
+                        `<i class="fas fa-wallet"></i> ₺${balanceFormatted}`;
+                    
+                    document.getElementById('totalBalance').innerHTML = 
+                        `<h1 style="font-size: 2rem; color: #00d4aa;">₺${balanceFormatted}</h1>`;
+                    
+                    // Modern Profile Updates
+                    const profileUsername = document.getElementById('profileUsername');
+                    const profileBalanceAmount = document.getElementById('profileBalanceAmount');
+                    const profileBalanceChange = document.getElementById('profileBalanceChange');
+                    const profileJoinDate = document.getElementById('profileJoinDate');
+                    
+                    if (profileUsername) {
+                        profileUsername.textContent = data.user.username || 'Kullanıcı';
+                    }
+                    
+                    if (profileBalanceAmount) {
+                        profileBalanceAmount.textContent = `₺${balanceFormatted}`;
+                    }
+                    
+                    if (profileBalanceChange) {
+                        // Günlük değişim hesapla (şimdilik sabit)
+                        const dailyChange = balance * 0.02; // %2 örnek artış
+                        profileBalanceChange.textContent = `+₺${dailyChange.toLocaleString('tr-TR', {minimumFractionDigits: 2})} (+2.0%)`;
+                    }
+                    
+                    if (profileJoinDate) {
+                        const joinDate = data.user.created_at ? new Date(data.user.created_at).toLocaleDateString('tr-TR', {
+                            year: 'numeric',
+                            month: 'long'
+                        }) : 'Ocak 2024';
+                        profileJoinDate.innerHTML = `
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Üye olma: ${joinDate}</span>
+                        `;
+                    }
+                    
+                    // Profile avatar güncelle
+                    const profileAvatar = document.getElementById('profileAvatar');
+                    if (profileAvatar) {
+                        const firstLetter = (data.user.username || 'U').charAt(0).toUpperCase();
+                        profileAvatar.innerHTML = `<i class="fas fa-user"></i>`;
+                    }
+                    
+                    // Modern user info display
+                    displayModernUserInfo(data.user);
+                    
+                    // Legacy updates
+                    document.getElementById('userInfo').innerHTML = `
+                        <div style="line-height: 1.8;">
+                            <p><strong>Kullanıcı Adı:</strong> ${data.user.username || 'N/A'}</p>
+                            <p><strong>Email:</strong> ${data.user.email || 'N/A'}</p>
+                            <p><strong>Ad Soyad:</strong> ${data.user.ad_soyad || 'Belirtilmemiş'}</p>
+                            <p><strong>Kayıt Tarihi:</strong> ${data.user.created_at ? new Date(data.user.created_at).toLocaleDateString('tr-TR') : 'N/A'}</p>
+                            <p><strong>Son Giriş:</strong> ${data.user.son_giris ? new Date(data.user.son_giris).toLocaleDateString('tr-TR') : 'İlk giriş'}</p>
+                            <p><strong>Hesap Tipi:</strong> ${data.user.role === 'admin' ? 'Yönetici' : 'Standart Kullanıcı'}</p>
+                            <p><strong>Toplam Bakiye:</strong> <span style="color: #00d4aa; font-weight: 600;">₺${balanceFormatted}</span></p>
+                        </div>
+                    `;
+                    
+                    // Bakiye kartı
+                    document.getElementById('balanceInfo').innerHTML = `
+                        <div style="text-align: center;">
+                            <h1 style="font-size: 2.5rem; color: #00d4aa; margin-bottom: 10px;">₺${balanceFormatted}</h1>
+                            <p style="color: #8b8fa3; margin-bottom: 15px;">Mevcut Bakiye</p>
+                            <div style="display: flex; gap: 10px; justify-content: center;">
+                                <button onclick="showSection('deposit')" style="background: #00d4aa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                                    <i class="fas fa-plus"></i> Para Yatır
+                                </button>
+                                <button onclick="showWithdrawalComingSoon()" style="background: #2d3748; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                                    <i class="fas fa-minus"></i> Para Çek
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // İstatistikler
+                    document.getElementById('totalTrades').textContent = '12';
+                    document.getElementById('profitLoss').textContent = '₺2,450';
+                    document.getElementById('memberSince').textContent = '3 ay';
+                    
+                    // İşlem geçmişi ve mevduatları yükle
+                    loadTransactionHistory();
+                    if (typeof loadRecentDeposits === 'function') {
+                        loadRecentDeposits();
+                    }
+                    
+                    // Diğer dashboard verilerini simüle et
+                    setTimeout(() => {
+                        document.getElementById('dailyPnl').innerHTML = 
+                            `<h2 style="color: #00d4aa;">+₺156.24</h2><small style="color: #8b8fa3;">+2.34%</small>`;
+                        
+                        document.getElementById('openPositions').innerHTML = 
+                            `<h2 style="color: #ffffff;">3</h2><small style="color: #8b8fa3;">Aktif pozisyon</small>`;
+                        
+                        document.getElementById('recentTrades').innerHTML = 
+                            `<p style="color: #8b8fa3;">Henüz işlem yapılmamış</p>`;
+                        
+                        document.getElementById('marketSummary').innerHTML = 
+                            `<p style="color: #8b8fa3;">Piyasa verileri yükleniyor...</p>`;
+                    }, 1000);
+                    
+                } else {
+                    console.error('❌ Kullanıcı girişi gerekli:', data.message);
+                    showNotification('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                }
+            })
+            .catch(err => {
+                console.error('❌ API Hatası:', err);
+                document.getElementById('totalBalance').innerHTML = '<span style="color: #ef4444;">Bağlantı Hatası</span>';
+                document.getElementById('userBalance').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Hata';
+                showNotification('Bağlantı hatası. Lütfen sayfayı yenileyin.', 'error');
+            });
+        }
+
+        // Show section helper function
+        function showSection(sectionName) {
+            // Nav link'i bul ve tıkla
+            const navLink = document.querySelector(`[data-section="${sectionName}"]`);
+            if (navLink) {
+                navLink.click();
+            }
+        }
+    </script>
+</body>
+</html>
