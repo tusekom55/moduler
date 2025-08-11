@@ -137,6 +137,39 @@ class UserPanelApp {
             balanceDisplay.addEventListener('click', this.handleBalanceClick.bind(this));
         }
         
+        // Coin search
+        const coinSearch = document.getElementById('coinSearch');
+        if (coinSearch) {
+            coinSearch.addEventListener('input', Utils.debounce(() => {
+                this.refreshMarketData();
+            }, 500));
+        }
+        
+        // Filter chips
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                e.target.classList.add('active');
+                this.refreshMarketData();
+            });
+        });
+        
+        // Trading modal close
+        const tradingModalClose = document.querySelector('#tradingModal .close-btn');
+        if (tradingModalClose) {
+            tradingModalClose.addEventListener('click', () => {
+                this.closeTradingModal();
+            });
+        }
+        
+        // Trading modal overlay
+        const tradingModalOverlay = document.querySelector('#tradingModal .modal-overlay');
+        if (tradingModalOverlay) {
+            tradingModalOverlay.addEventListener('click', () => {
+                this.closeTradingModal();
+            });
+        }
+        
         // Keyboard shortcuts
         document.addEventListener('keydown', this.handleKeyboardShortcuts.bind(this));
         
@@ -395,10 +428,10 @@ class UserPanelApp {
                     </div>
                 </div>
                 <div class="coin-actions">
-                    <button class="trade-btn buy" onclick="event.stopPropagation(); this.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'buy')">
+                    <button class="trade-btn buy" onclick="event.stopPropagation(); window.app.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'buy')">
                         <i class="fas fa-arrow-up"></i> Al
                     </button>
-                    <button class="trade-btn sell" onclick="event.stopPropagation(); this.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'sell')">
+                    <button class="trade-btn sell" onclick="event.stopPropagation(); window.app.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'sell')">
                         <i class="fas fa-arrow-down"></i> Sat
                     </button>
                 </div>
@@ -438,10 +471,10 @@ class UserPanelApp {
                     </div>
                 </div>
                 <div class="mobile-coin-actions">
-                    <button class="mobile-trade-btn buy" onclick="event.stopPropagation(); this.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'buy')">
+                    <button class="mobile-trade-btn buy" onclick="event.stopPropagation(); window.app.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'buy')">
                         <i class="fas fa-plus"></i> Al
                     </button>
-                    <button class="mobile-trade-btn sell" onclick="event.stopPropagation(); this.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'sell')">
+                    <button class="mobile-trade-btn sell" onclick="event.stopPropagation(); window.app.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'sell')">
                         <i class="fas fa-minus"></i> Sat
                     </button>
                 </div>

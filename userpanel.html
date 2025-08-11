@@ -212,12 +212,59 @@
                         <p class="section-subtitle">Kripto para piyasalarını takip edin ve işlem yapın</p>
                     </div>
                     
-                    <div class="markets-container">
-                        <div class="desktop-coins-grid">
+                    <!-- Market Controls -->
+                    <div class="market-controls">
+                        <div class="search-container">
+                            <div class="search-input-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" id="coinSearch" placeholder="Coin ara..." class="search-input">
+                            </div>
+                        </div>
+                        
+                        <div class="market-filters">
+                            <button class="filter-chip active" data-filter="all">
+                                <i class="fas fa-globe"></i>
+                                Tümü
+                            </button>
+                            <button class="filter-chip" data-filter="favorites">
+                                <i class="fas fa-star"></i>
+                                Favoriler
+                            </button>
+                            <button class="filter-chip" data-filter="gainers">
+                                <i class="fas fa-arrow-up"></i>
+                                Yükselenler
+                            </button>
+                            <button class="filter-chip" data-filter="losers">
+                                <i class="fas fa-arrow-down"></i>
+                                Düşenler
+                            </button>
+                        </div>
+                        
+                        <div class="market-stats">
+                            <div class="market-stat">
+                                <span class="stat-label">Son Güncelleme:</span>
+                                <span id="lastUpdate" class="stat-value">--:--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Market Loader -->
+                    <div id="marketLoader" class="market-loader" style="display: flex;">
+                        <div class="loader-content">
+                            <div class="modern-spinner"></div>
+                            <p>Piyasa verileri yükleniyor...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Markets Container -->
+                    <div class="modern-market-container">
+                        <!-- Desktop Grid -->
+                        <div id="desktopCoinsGrid" class="desktop-coins-grid" style="display: grid;">
                             <!-- Desktop coin cards will be loaded here -->
                         </div>
                         
-                        <div class="mobile-coins-grid" style="display: none;">
+                        <!-- Mobile Grid -->
+                        <div id="mobileCoinsGrid" class="mobile-coins-grid" style="display: none;">
                             <!-- Mobile coin cards will be loaded here -->
                         </div>
                     </div>
