@@ -1331,6 +1331,349 @@ class UserPanelApp {
                 this.modules.notifications.error('Satış işlemi sırasında hata oluştu');
             }
         }
+
+        // Load positions
+        async loadPositions() {
+            try {
+                const response = await fetch('backend/user/leverage_trading.php?action=positions', {
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    AppState.positions = data.positions;
+                    this.displayPositions(data.positions);
+                    this.updatePositionStats(data.positions);
+                } else {
+                    throw new Error(data.error || 'Pozisyonlar yüklenemedi');
+                }
+            } catch (error) {
+                console.error('Pozisyon yükleme hatası:', error);
+                const positionsTable = document.getElementById('positionsTable');
+                if (positionsTable) {
+                    positionsTable.innerHTML = `
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Pozisyonlar yüklenirken hata oluştu</span>
+                            <br>
+                            <small>Hata: ${error.message}</small>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Display positions
+        displayPositions(positions) {
+            const container = document.getElementById('positionsTable');
+            if (!container) return;
+            
+            if (positions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Henüz Pozisyon Yok</h3>
+                        <p>Kaldıraçlı işlem yapmak için piyasalar sayfasından coin seçip kaldıraçlı mod ile işlem yapabilirsiniz</p>
+                        <button class="btn-primary" onclick="window.app.showSection('markets')">
+                            <i class="fas fa-plus"></i>
+                            İlk Pozisyonu Aç
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let positionsHTML = `<div class="modern-positions-container">`;
+
+            positions.forEach(position => {
+                const pnlClass = position.unrealized_pnl >= 0 ? 'positive' : 'negative';
+                const pnlSign = position.unrealized_pnl >= 0 ? '+' : '';
+                const pnlPercentage = parseFloat(position.pnl_percentage || 0).toFixed(1);
+                
+                positionsHTML += `
+                    <div class="modern-position-card ${position.position_type}">
+                        <div class="position-main-info">
+                            <div class="coin-section">
+                                <div class="coin-icon">
+                                    ${position.coin_symbol.charAt(0)}
+                                </div>
+                                <div class="coin-details">
+                                    <h3 class="coin-name">${position.coin_symbol}</h3>
+                                    <div class="position-type ${position.position_type}">
+                                        <i class="fas fa-arrow-${position.position_type === 'long' ? 'up' : 'down'}"></i>
+                                        <span>${position.position_type.toUpperCase()} ${position.leverage_ratio}x</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="pnl-section ${pnlClass}">
+                                <div class="pnl-amount">
+                                    ${pnlSign}₺${Math.abs(parseFloat(position.unrealized_pnl)).toLocaleString('tr-TR', {minimumFractionDigits: 0})}
+                                </div>
+                                <div class="pnl-percentage">
+                                    ${pnlSign}${pnlPercentage}%
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="position-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Yatırım</span>
+                                <span class="stat-value">₺${parseFloat(position.invested_amount).toLocaleString('tr-TR', {minimumFractionDigits: 0})}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Giriş Fiyatı</span>
+                                <span class="stat-value">₺${parseFloat(position.entry_price).toLocaleString('tr-TR', {minimumFractionDigits: 0})}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Güncel Fiyat</span>
+                                <span class="stat-value">₺${parseFloat(position.current_price || position.market_price).toLocaleString('tr-TR', {minimumFractionDigits: 0})}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Açılış Zamanı</span>
+                                <span class="stat-value">${new Date(position.created_at).toLocaleDateString('tr-TR')}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="position-actions">
+                            <button class="btn-close-position" onclick="window.app.closePosition(${position.id}, '${position.coin_symbol}', ${position.current_price || position.market_price})">
+                                <i class="fas fa-times"></i>
+                                Pozisyonu Kapat
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            positionsHTML += `</div>`;
+            container.innerHTML = positionsHTML;
+        }
+
+        // Update position stats
+        updatePositionStats(positions) {
+            const totalPositions = positions.length;
+            const totalInvested = positions.reduce((sum, pos) => sum + parseFloat(pos.invested_amount), 0);
+            const totalUnrealizedPnL = positions.reduce((sum, pos) => sum + parseFloat(pos.unrealized_pnl), 0);
+            
+            const totalPositionsEl = document.getElementById('totalPositions');
+            const totalInvestedEl = document.getElementById('totalInvested');
+            const totalUnrealizedPnLEl = document.getElementById('totalUnrealizedPnL');
+            
+            if (totalPositionsEl) totalPositionsEl.textContent = totalPositions;
+            if (totalInvestedEl) totalInvestedEl.textContent = '₺' + totalInvested.toLocaleString('tr-TR', {minimumFractionDigits: 2});
+            
+            if (totalUnrealizedPnLEl) {
+                const pnlSign = totalUnrealizedPnL >= 0 ? '+' : '';
+                totalUnrealizedPnLEl.textContent = pnlSign + '₺' + Math.abs(totalUnrealizedPnL).toLocaleString('tr-TR', {minimumFractionDigits: 2});
+                totalUnrealizedPnLEl.style.color = totalUnrealizedPnL >= 0 ? '#10b981' : '#ef4444';
+            }
+
+            // Update position count in navigation
+            const positionCount = document.getElementById('positionCount');
+            if (totalPositions > 0) {
+                if (positionCount) {
+                    positionCount.textContent = totalPositions;
+                    positionCount.style.display = 'flex';
+                }
+            } else {
+                if (positionCount) {
+                    positionCount.style.display = 'none';
+                }
+            }
+        }
+
+        // Close position
+        async closePosition(positionId, coinSymbol, currentPrice) {
+            if (!confirm(`${coinSymbol} pozisyonunu kapatmak istediğinizden emin misiniz?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('backend/user/leverage_trading.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        action: 'close_position',
+                        position_id: positionId,
+                        close_price: currentPrice
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.modules.notifications.success(`Pozisyon başarıyla kapatıldı! K/Z: ₺${parseFloat(data.pnl).toLocaleString('tr-TR', {minimumFractionDigits: 2})}`);
+                    await this.loadPositions();
+                    await this.loadUserInfo();
+                } else {
+                    throw new Error(data.error || 'Pozisyon kapatılamadı');
+                }
+            } catch (error) {
+                console.error('Pozisyon kapatma hatası:', error);
+                this.modules.notifications.error('Pozisyon kapatılırken hata oluştu');
+            }
+        }
+
+        // Load deposits
+        async loadDeposits() {
+            try {
+                const response = await fetch('backend/user/deposits.php?action=list', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    this.displayDeposits(data.data);
+                } else {
+                    const container = document.getElementById('recent-deposits');
+                    if (container) {
+                        container.innerHTML = `
+                            <div style="text-align: center; padding: 40px; color: #8b8fa3;">
+                                <i class="fas fa-info-circle" style="font-size: 24px; margin-bottom: 12px;"></i>
+                                <p>Henüz para yatırma talebiniz bulunmuyor.</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load deposits:', error);
+            }
+        }
+
+        // Display deposits
+        displayDeposits(deposits) {
+            const container = document.getElementById('recent-deposits');
+            if (!container) return;
+            
+            let depositsHTML = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            
+            deposits.forEach(deposit => {
+                const statusClass = deposit.durum === 'beklemede' ? 'status-pending' : 
+                                  deposit.durum === 'onaylandi' ? 'status-approved' : 'status-rejected';
+                const statusText = deposit.durum === 'beklemede' ? 'Beklemede' : 
+                                 deposit.durum === 'onaylandi' ? 'Onaylandı' : 'Reddedildi';
+                
+                const methodNames = {
+                    'papara': 'Papara',
+                    'ziraat': 'Ziraat Bankası',
+                    'garanti': 'Garanti BBVA',
+                    'isbank': 'İş Bankası',
+                    'akbank': 'Akbank',
+                    'yapikredi': 'Yapı Kredi'
+                };
+                const methodName = methodNames[deposit.yontem] || deposit.yontem;
+                
+                depositsHTML += `
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 16px; border-radius: 12px; border-left: 4px solid ${deposit.durum === 'beklemede' ? '#fbbf24' : deposit.durum === 'onaylandi' ? '#00d4aa' : '#ef4444'};">
+                        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 8px;">
+                            <div>
+                                <strong style="color: #ffffff;">${methodName}</strong>
+                                <span style="margin-left: 12px; color: #8b8fa3;">₺${parseFloat(deposit.tutar).toLocaleString()}</span>
+                            </div>
+                            <span class="status-badge ${statusClass}" style="padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">${statusText}</span>
+                        </div>
+                        <div style="color: #8b8fa3; font-size: 12px;">
+                            ${new Date(deposit.tarih).toLocaleDateString('tr-TR')} ${new Date(deposit.tarih).toLocaleTimeString('tr-TR')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            depositsHTML += '</div>';
+            container.innerHTML = depositsHTML;
+        }
+
+        // Setup deposit form
+        setupDepositForm() {
+            const depositForm = document.getElementById('deposit-form');
+            const depositMethod = document.getElementById('deposit-method');
+            
+            if (!depositForm || !depositMethod) return;
+            
+            // Method change handler
+            depositMethod.addEventListener('change', (e) => {
+                this.toggleMethodFields(e.target.value);
+            });
+            
+            // Form submit handler
+            depositForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.submitDepositRequest();
+            });
+        }
+
+        // Toggle method fields
+        toggleMethodFields(method) {
+            const methodFields = document.querySelectorAll('.method-fields');
+            methodFields.forEach(field => {
+                field.style.display = 'none';
+            });
+            
+            if (method) {
+                const selectedMethodFields = document.getElementById(method + '-fields');
+                if (selectedMethodFields) {
+                    selectedMethodFields.style.display = 'block';
+                }
+            }
+        }
+
+        // Submit deposit request
+        async submitDepositRequest() {
+            const method = document.getElementById('deposit-method').value;
+            const amount = parseFloat(document.getElementById('deposit-amount').value);
+            const note = document.getElementById('deposit-note').value;
+            
+            if (!method) {
+                this.modules.notifications.error('Lütfen yatırma yöntemini seçin!');
+                return;
+            }
+            
+            if (!amount || amount < 10) {
+                this.modules.notifications.error('Minimum yatırım tutarı ₺10\'dur!');
+                return;
+            }
+            
+            if (amount > 50000) {
+                this.modules.notifications.error('Maksimum yatırım tutarı ₺50,000\'dir!');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('yontem', method);
+                formData.append('tutar', amount);
+                formData.append('detay_bilgiler', JSON.stringify({ selected_bank: method }));
+                if (note) formData.append('aciklama', note);
+                
+                const response = await fetch('backend/user/deposits.php?action=create', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.modules.notifications.success(`Para yatırma talebiniz başarıyla gönderildi! Talep ID: ${data.data.id}`);
+                    document.getElementById('deposit-form').reset();
+                    this.toggleMethodFields('');
+                    await this.loadDeposits();
+                } else {
+                    this.modules.notifications.error('Hata: ' + (data.error || 'Talep gönderilemedi'));
+                }
+            } catch (error) {
+                console.error('Para yatırma hatası:', error);
+                this.modules.notifications.error('Talep gönderilirken bir hata oluştu: ' + error.message);
+            }
+        }
 }
 
 // Initialize app when DOM is loaded
