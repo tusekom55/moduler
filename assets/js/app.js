@@ -712,10 +712,10 @@ class UserPanelApp {
                     </div>
                 </div>
                 <div class="coin-actions">
-                    <button class="trade-btn buy" onclick="event.stopPropagation(); window.app.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'buy')">
+                    <button class="trade-btn buy" onclick="event.stopPropagation(); alert('${coin.name} (${coin.symbol}) satın alma işlemi başlatılıyor...\\nFiyat: ₺${parseFloat(coin.current_price).toLocaleString('tr-TR')}')">
                         <i class="fas fa-arrow-up"></i> Al
                     </button>
-                    <button class="trade-btn sell" onclick="event.stopPropagation(); window.app.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'sell')">
+                    <button class="trade-btn sell" onclick="event.stopPropagation(); alert('${coin.name} (${coin.symbol}) satış işlemi başlatılıyor...\\nFiyat: ₺${parseFloat(coin.current_price).toLocaleString('tr-TR')}')">
                         <i class="fas fa-arrow-down"></i> Sat
                     </button>
                 </div>
@@ -755,10 +755,10 @@ class UserPanelApp {
                     </div>
                 </div>
                 <div class="mobile-coin-actions">
-                    <button class="mobile-trade-btn buy" onclick="event.stopPropagation(); window.app.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'buy')">
+                    <button class="mobile-trade-btn buy" onclick="event.stopPropagation(); alert('${coin.name} (${coin.symbol}) satın alma işlemi başlatılıyor...\\nFiyat: ₺${parseFloat(coin.current_price).toLocaleString('tr-TR')}')">
                         <i class="fas fa-plus"></i> Al
                     </button>
-                    <button class="mobile-trade-btn sell" onclick="event.stopPropagation(); window.app.openTradingModal(${JSON.stringify(coin).replace(/"/g, '&quot;')}, 'sell')">
+                    <button class="mobile-trade-btn sell" onclick="event.stopPropagation(); alert('${coin.name} (${coin.symbol}) satış işlemi başlatılıyor...\\nFiyat: ₺${parseFloat(coin.current_price).toLocaleString('tr-TR')}')">
                         <i class="fas fa-minus"></i> Sat
                     </button>
                 </div>
